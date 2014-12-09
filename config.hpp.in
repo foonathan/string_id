@@ -1,0 +1,16 @@
+// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// This file is subject to the license terms in the LICENSE file
+// found in the top-level directory of this distribution.
+
+#ifndef FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
+#define FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
+
+/// \brief Whether or not the database for string ids is active.
+/// \detail This is \c true by default, change it via CMake option \c FOONATHAN_STRING_ID_DATABASE.
+#cmakedefine01 FOONATHAN_STRING_ID_DATABASE
+
+/// \brief Whether or not the database should thread safe.
+/// \detail This is \c true by default, change it via CMake option \c FOONATHAN_STRING_ID_MULTITHREADED.
+#cmakedefine01 FOONATHAN_STRING_ID_MULTITHREADED
+
+#endif // FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
