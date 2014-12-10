@@ -24,7 +24,7 @@ namespace foonathan { namespace string_id
         /// \brief Creates a new id by hashing a given string.
         /// \detail It will insert the string into the given \ref database.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
-        string_id(const char *str, database &db);
+        string_id(const char *str, detail::basic_database &db);
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
@@ -76,7 +76,7 @@ namespace foonathan { namespace string_id
         
     private:
         detail::hash_type id_;
-        database *db_;
+        detail::basic_database *db_;
     };
     
     namespace literals

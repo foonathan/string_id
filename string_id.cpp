@@ -6,7 +6,7 @@
 
 #include "detail/database.hpp"
 
-foonathan::string_id::string_id::string_id(const char *str, database &db)
+foonathan::string_id::string_id::string_id(const char *str, detail::basic_database &db)
 : id_(detail::sid_hash(str)), db_(&db)
 {
     if (!db_->insert(id_, str))

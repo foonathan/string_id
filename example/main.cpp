@@ -13,7 +13,7 @@ int main() try
     
     // create database to store the strings in
     // must stay valid as long as each string_id using it
-    sid::database database;
+    sid::detail::dummy_database database;
     
     // create an id
     sid::string_id id("Test0815", database);
