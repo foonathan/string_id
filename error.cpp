@@ -11,7 +11,7 @@ namespace sid = foonathan::string_id;
 
 namespace
 {
-    std::string format(sid::detail::hash_type hash, const char *a, const char *b)
+    std::string format(sid::hash_type hash, const char *a, const char *b)
     {
         std::ostringstream str;
         str << "foonathan::string_id::collision_error: strings "
@@ -20,7 +20,7 @@ namespace
         return str.str();
     }
     
-    void default_collision_handler(sid::detail::hash_type hash, const char *a, const char *b)
+    void default_collision_handler(sid::hash_type hash, const char *a, const char *b)
     {
         throw sid::collision_error(hash, a, b);
     }
@@ -28,7 +28,7 @@ namespace
     std::atomic<sid::collision_handler> handler(default_collision_handler);
 }
 
-sid::collision_error::collision_error(detail::hash_type hash, const char *a, const char *b)
+sid::collision_error::collision_error(hash_type hash, const char *a, const char *b)
 : logic_error(format(hash, a, b)), a_(a), b_(b), hash_(hash)
 {}
 

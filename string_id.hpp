@@ -7,7 +7,7 @@
 
 #include <functional>
 
-#include "detail/hash.hpp"
+#include "hash.hpp"
 #include "config.hpp"
 #include "database.hpp"
 #include "error.hpp"
@@ -28,7 +28,7 @@ namespace foonathan { namespace string_id
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
-        detail::hash_type hash_code() const noexcept
+        hash_type hash_code() const noexcept
         {
             return id_;
         }
@@ -48,12 +48,12 @@ namespace foonathan { namespace string_id
             return a.db_ == b.db_ && a.id_ == b.id_;
         }
         
-        friend bool operator==(detail::hash_type a, string_id b) noexcept
+        friend bool operator==(hash_type a, string_id b) noexcept
         {
             return a == b.id_;
         }
         
-        friend bool operator==(string_id a, detail::hash_type b) noexcept
+        friend bool operator==(string_id a, hash_type b) noexcept
         {
             return a.id_ == b;
         }
@@ -63,19 +63,19 @@ namespace foonathan { namespace string_id
             return !(a == b);
         }
         
-        friend bool operator!=(detail::hash_type a, string_id b) noexcept
+        friend bool operator!=(hash_type a, string_id b) noexcept
         {
             return !(a == b);
         }
         
-        friend bool operator!=(string_id a, detail::hash_type b) noexcept
+        friend bool operator!=(string_id a, hash_type b) noexcept
         {
             return !(a == b);
         }
         /// @}
         
     private:
-        detail::hash_type id_;
+        hash_type id_;
         detail::basic_database *db_;
     };
     
@@ -84,7 +84,7 @@ namespace foonathan { namespace string_id
         /// \brief A useful literal to hash a string.
         /// \detail Since this function does not check for collisions only use it to compare a \ref string_id.<br>
         /// It is also useful in places where a compile-time constant is needed.
-        constexpr detail::hash_type operator""_id(const char *str, std::size_t) noexcept
+        constexpr hash_type operator""_id(const char *str, std::size_t) noexcept
         {
             return detail::sid_hash(str);
         }

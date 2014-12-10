@@ -9,13 +9,14 @@
 #include <string>
 #include <unordered_map>
 
-#include "hash.hpp"
+#include "../hash.hpp"
 
 namespace foonathan { namespace string_id { namespace detail
 {
     class basic_database
     {
     public:
+        // note: no virtual destructor, not intended to be deleted via a base pointer
         virtual bool insert(hash_type hash, const char* str) = 0;
         virtual const char* lookup(hash_type hash) const = 0;
     };
