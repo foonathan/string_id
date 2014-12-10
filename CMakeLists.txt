@@ -27,7 +27,7 @@ else()
             string_id.hpp)
     add_library(foonathan_string_id ${SRC})
     add_executable(foonathan_string_id_example ${SRC} example/main.cpp)
-    set(targets foonathan_string_id string_id_example)
+    set(targets foonathan_string_id foonathan_string_id_example)
 endif()
 
 include(cxxver.cmake)
