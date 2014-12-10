@@ -14,15 +14,15 @@ So on the one hand we want fast and lightweight identifiers but on the other han
 
 string_id
 ---------
-This open source library provides a mix between the two solutions in the form of the class string_id. Each object stores a hashed string value and a pointer to the database in which the original string value is stored. This allows retrieving the string value when needed while also getting the performance benefits from hashed strings. In addition, the database can detect collisions which can be handled via a custom collision handler. There is a user-defined literal to create a compile-time hashed string value to use it as a constant expression.
+This open source library provides a mix between the two solutions in the form of the class *string_id*. Each object stores a hashed string value and a pointer to the database in which the original string value is stored. This allows retrieving the string value when needed while also getting the performance benefits from hashed strings. In addition, the database can detect collisions which can be handled via a custom collision handler. There is a user-defined literal to create a compile-time hashed string value to use it as a constant expression.
+
+The database can be any user-defined type derived from a certain interface class. There are several pre-defined databases. A typedef *default_database* is a database which properties are set via the following CMake options:
+
+* *FOONATHAN_STRING_ID_DATABASE* - if *OFF*, the database is disabled completely. This does not allow retrieving strings or collision checking but does not need that much memory. It is *ON* by default.
+
+* *FOONATHAN_STRING_ID_MULTITHREADED* - if *ON*, database access will be synchronized via a mutex. It has no effect if database is disabled. Default value is *ON*.
 
 See example/main.cpp for an example.
-
-The database can be configured via the following CMake options:
-
-* FOONATHAN_STRING_ID_DATABASE - if OFF, the database is disabled completely. This does not allow retrieving strings or collision checking but does not need that much memory. It is ON by default.
-
-* FOONATHAN_STRING_ID_MULTITHREADED - if ON, database access will be synchronized via a mutex. It has no effect if database is disabled. Default value is ON.
 
 Hashing
 -------

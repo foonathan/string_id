@@ -12,7 +12,7 @@ int main() try
     using namespace sid::literals;
     
     // create database to store the strings in
-    // must stay valid as long as each string_id using it
+    // it must stay valid as long as each string_id using it
     sid::default_database database;
     
     // create an id

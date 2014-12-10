@@ -87,8 +87,8 @@ namespace foonathan { namespace string_id
         {
             return detail::sid_hash(str);
         }
-    } // literals
-}} // foonathan::string_id
+    } // namespace literals
+}} // namespace foonathan::string_id
 
 namespace std
 {
@@ -104,6 +104,6 @@ namespace std
             return arg.hash_code();
         }
     };
-} // std
+} // namspace std
 
 #endif // FOONATHAN_STRING_ID_HPP_INCLUDED 

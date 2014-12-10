@@ -100,6 +100,6 @@ namespace foonathan { namespace string_id
 #else
     using default_database = dummy_database;
 #endif
-}}
+}} // namespace foonathan::string_id
 
 #endif // FOONATHAN_STRING_ID_DATABASE_HPP_INCLUDED
