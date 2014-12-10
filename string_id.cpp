@@ -4,9 +4,9 @@
 
 #include "string_id.hpp"
 
-#include "detail/database.hpp"
+namespace sid = foonathan::string_id;
 
-foonathan::string_id::string_id::string_id(const char *str, detail::basic_database &db)
+sid::string_id::string_id(const char *str, basic_database &db)
 : id_(detail::sid_hash(str)), db_(&db)
 {
     if (!db_->insert(id_, str))
@@ -17,7 +17,7 @@ foonathan::string_id::string_id::string_id(const char *str, detail::basic_databa
     }
 }
 
-const char* foonathan::string_id::string_id::string() const
+const char* sid::string_id::string() const noexcept
 {
     return db_->lookup(id_);
 }

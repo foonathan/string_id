@@ -13,13 +13,13 @@ int main() try
     
     // create database to store the strings in
     // must stay valid as long as each string_id using it
-    sid::detail::dummy_database database;
+    sid::default_database database;
     
     // create an id
     sid::string_id id("Test0815", database);
     std::cout << "Hash code " << id.hash_code() << " belongs to string \"" << id.string() << "\"\n";
-    // Output (Database enabled): Hash code 16741300784925887095 belongs to string "Test0815"
-    // Output (Database disabled): Hash code 16741300784925887095 belongs to string "string_id database disabled"
+    // Output (Database supports retrieving): Hash code 16741300784925887095 belongs to string "Test0815"
+    // Output (Database doesn't): Hash code 16741300784925887095 belongs to string "string_id database disabled"
     
     sid::string_id a("Hello", database), b("World", database);
     

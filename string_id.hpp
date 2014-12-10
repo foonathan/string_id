@@ -22,9 +22,9 @@ namespace foonathan { namespace string_id
     public:
         //=== constructors ===//
         /// \brief Creates a new id by hashing a given string.
-        /// \detail It will insert the string into the given \ref database.<br>
+        /// \detail It will insert the string into the given \ref database which will copy it.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
-        string_id(const char *str, detail::basic_database &db);
+        string_id(const char *str, basic_database &db);
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
@@ -34,9 +34,8 @@ namespace foonathan { namespace string_id
         }
         
         /// \brief Returns the string value itself.
-        /// \detail This only works when the database is enabled,
-        /// otherwise retrieving is not possible and an error message is returned.
-        const char* string() const;
+        /// \detail This calls the \c lookup function on the database.
+        const char* string() const noexcept;
         
         //=== comparision ===//
         /// @{
@@ -76,7 +75,7 @@ namespace foonathan { namespace string_id
         
     private:
         hash_type id_;
-        detail::basic_database *db_;
+        basic_database *db_;
     };
     
     namespace literals
