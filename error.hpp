@@ -7,14 +7,14 @@
 
 #include <stdexcept>
 
-#include "detail/hash.hpp"
+#include "hash.hpp"
 
 namespace foonathan { namespace string_id
 {
     /// \brief The type of the collision handler.
     /// \detail It will be called when a string hashing results in a collision giving it the two strings collided.
     /// The default handler throws an exception of type \ref collision_error.
-    using collision_handler = void(*)(detail::hash_type hash, const char *a, const char *b);
+    using collision_handler = void(*)(hash_type hash, const char *a, const char *b);
     
     /// \brief Exchanges the \ref collision_handler.
     /// \detail This function is thread safe.
@@ -29,7 +29,7 @@ namespace foonathan { namespace string_id
     public:
         //=== constructor/destructor ===//
         /// \brief Creates a new exception, same parameter as \ref collision_handler.
-        collision_error(detail::hash_type hash, const char *a, const char *b);
+        collision_error(hash_type hash, const char *a, const char *b);
         
         ~collision_error() noexcept override = default;
         
@@ -48,14 +48,14 @@ namespace foonathan { namespace string_id
         /// @}
         
         /// \brief Returns the hash code of the collided strings.
-        detail::hash_type hash_code() const noexcept
+        hash_type hash_code() const noexcept
         {
             return hash_;
         }
         
     private:
         std::string a_, b_;
-        detail::hash_type hash_;
+        hash_type hash_;
     };
 }} // namespace foonathan::string_id
 

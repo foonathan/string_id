@@ -16,13 +16,12 @@ else()
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
 	               "${CMAKE_CURRENT_BINARY_DIR}/config.hpp")
     
-    set(SRC detail/database.cpp
-            detail/database.hpp
-            detail/hash.hpp
-            ${CMAKE_CURRENT_BINARY_DIR}/config.hpp
+    set(SRC ${CMAKE_CURRENT_BINARY_DIR}/config.hpp
             database.hpp
+            database.cpp
             error.cpp
             error.hpp
+            hash.hpp
             string_id.cpp
             string_id.hpp)
     add_library(foonathan_string_id ${SRC})
