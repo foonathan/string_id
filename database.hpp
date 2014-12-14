@@ -5,8 +5,8 @@
 #ifndef FOONATHAN_STRING_ID_DATABASE_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_DATABASE_HPP_INCLUDED
 
+#include <memory>
 #include <mutex>
-#include <string>
 #include <unordered_map>
 
 #include "config.hpp"
@@ -18,12 +18,20 @@ namespace foonathan { namespace string_id
     /// \detail You can derive own databases from it.
     class basic_database
     {
-    public:
+    public:        
+        /// @{
+        /// \brief Databases are not copy- or moveable.
+        /// \detail You must not write a swap function either!<br>
+        /// This has implementation reasons.
+        basic_database(const basic_database &) = delete;
+        basic_database(basic_database &&) = delete;
+        /// @}
+        
         /// \brief Should insert a new hash-string-pair into the internal database.
         /// \detail The string must be copied prior to stroing, it may not stay valid.<br>
         /// It should return \c false if there is already a different string stored for that hash,
         /// that is if it encounters a collision.
-        virtual bool insert(hash_type hash, const char* str) = 0;
+        virtual bool insert(hash_type hash, const char* str, std::size_t length) = 0;
         
         /// \brief Should return the string stored with a given hash.
         /// \detail The return value should stay valid as long as the database exists.<br>
@@ -32,6 +40,7 @@ namespace foonathan { namespace string_id
         virtual const char* lookup(hash_type hash) const noexcept = 0;
         
     protected:
+        basic_database() noexcept = default;
         ~basic_database() noexcept = default;
     };
     
@@ -41,7 +50,7 @@ namespace foonathan { namespace string_id
     class dummy_database : public basic_database
     {
     public:        
-        bool insert(hash_type, const char *) override
+        bool insert(hash_type, const char *, std::size_t) override
         {
             return true;
         }
@@ -52,15 +61,23 @@ namespace foonathan { namespace string_id
         }
     };
     
-    /// \brief A database that uses an \c std::unordered_map to store the hash-string pairs.
+    /// \brief A database that uses a highly optimized hash table.
     class map_database : public basic_database
     {
     public:        
-        bool insert(hash_type hash, const char *str) override;
+        /// \brief Creates a new database with given number of buckets and maximum load factor.
+        map_database(std::size_t size = 1024, double max_load_factor = 1.0);
+        ~map_database() noexcept;
+        
+        bool insert(hash_type hash, const char *str, std::size_t length) override;
         const char* lookup(hash_type hash) const noexcept override;
         
-    private:
-        std::unordered_map<hash_type, std::string> strings_;
+    private:        
+        class node_list;
+        std::unique_ptr<node_list[]> buckets_;
+        std::size_t no_items_, no_buckets_;
+        double max_load_factor_;
+        std::size_t next_resize_;
     };
     
     /// \brief A thread-safe database adapter.
@@ -74,10 +91,10 @@ namespace foonathan { namespace string_id
         
         using Database::Database;
         
-        bool insert(hash_type hash, const char *str) override
+        bool insert(hash_type hash, const char *str, std::size_t length) override
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return Database::insert(hash, str);
+            return Database::insert(hash, str, length);
         }
         
         const char* lookup(hash_type hash) const noexcept override

@@ -16,14 +16,16 @@ string_id
 ---------
 This open source library provides a mix between the two solutions in the form of the class *string_id*. Each object stores a hashed string value and a pointer to the database in which the original string value is stored. This allows retrieving the string value when needed while also getting the performance benefits from hashed strings. In addition, the database can detect collisions which can be handled via a custom collision handler. There is a user-defined literal to create a compile-time hashed string value to use it as a constant expression.
 
-The database can be any user-defined type derived from a certain interface class. There are several pre-defined databases. A typedef *default_database* is a database which properties are set via the following CMake options:
+The database can be any user-defined type derived from a certain interface class. There are several pre-defined databases. This includes a dummy database that does not store anything, a adapter for other databases to make them threadsafe and a highly optimized database for efficient storing and retrieving of strings. A typedef *default_database* is one of those databases and can be set via the following CMake options:
 
-* *FOONATHAN_STRING_ID_DATABASE* - if *OFF*, the database is disabled completely. This does not allow retrieving strings or collision checking but does not need that much memory. It is *ON* by default.
+* *FOONATHAN_STRING_ID_DATABASE* - if *OFF*, the database is disabled completely, e.g. the dummy database is used. This does not allow retrieving strings or collision checking but does not need that much memory. It is *ON* by default.
 
-* *FOONATHAN_STRING_ID_MULTITHREADED* - if *ON*, database access will be synchronized via a mutex. It has no effect if database is disabled. Default value is *ON*.
+* *FOONATHAN_STRING_ID_MULTITHREADED* - if *ON*, database access will be synchronized via a mutex, e.g. the thread safe adapter will be used. It has no effect if database is disabled. Default value is *ON*.
 
 See example/main.cpp for an example.
 
-Hashing
--------
+Hashing and Databases
+---------------------
 It currently uses a FNV-1a 64bit hash. Collisions are really rare, I have tested 219,606 English words (in lowercase) mixed with a bunch of numbers and didn't encounter a single collision. Since this is the normal use case for identifiers, the hash function is pretty good. In addition, there is a good distribution of the hashed values and it is easy to calculate.
+
+The database uses a specialized hash table. Collisions of the bucket index are resolved via seperate chaining with single linked list. Each node contains the string directly without additional memory allocation. The nodes on the linked list are sorted using the hash value. This allows efficient retrieving and checking whether there is already a string with the same hash value stored. This makes it very efficient and faster than the std::unordered_map that was used before (at least faster than libstdc++ implementation I have used for the benchmarks...).

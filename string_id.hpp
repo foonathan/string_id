@@ -21,10 +21,14 @@ namespace foonathan { namespace string_id
     {
     public:
         //=== constructors ===//
+        /// @{
         /// \brief Creates a new id by hashing a given string.
         /// \detail It will insert the string into the given \ref database which will copy it.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
         string_id(const char *str, basic_database &db);
+        
+        string_id(const char *str, std::size_t length, basic_database &db);
+        /// @}
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
