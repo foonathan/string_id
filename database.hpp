@@ -62,10 +62,6 @@ namespace foonathan { namespace string_id
     };
     
     /// \brief A database that uses a highly optimized hash table.
-    /// \detail It contains the equivalent of \c std::vector<std::forward_list<node>>.
-    /// When inserting a new node, the memory for it and for the string is allocated with one call.
-    /// Nodes inside a bucket are sorted after the hash value for efficient access.
-    /// Each string is only stored once.
     class map_database : public basic_database
     {
     public:        
