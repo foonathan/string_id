@@ -13,11 +13,17 @@ class sid::map_database::node_list
         hash_type hash;
         node *next;
         
-        node(const char *str, hash_type h, node *next) noexcept
+        node(const char *prefix, const char *str, hash_type h, node *next) noexcept
         : hash(h), next(next)
         {
             void* mem = this;
-            std::strcpy(static_cast<char*>(mem) + sizeof(node), str);
+            auto dest = static_cast<char*>(mem) + sizeof(node);
+            if (prefix)
+            {
+                while (*prefix)
+                    *dest++ = *prefix++;
+            }
+            std::strcpy(dest, str);
         }
         
         const char* get_str() const noexcept
@@ -42,12 +48,12 @@ public:
     }
     
     // inserts new node, checks for collisions and updates number of nodes
-    bool insert(std::size_t &size, hash_type hash, const char *str, std::size_t length)
+    bool insert(std::size_t &size, hash_type hash, const char *prefix, const char *str, std::size_t length)
     {
         if (!head_)
         {
             auto mem = ::operator new(sizeof(node) + length + 1);
-            head_ = ::new(mem) node(str, hash, nullptr);
+            head_ = ::new(mem) node(prefix, str, hash, nullptr);
             ++size;
         }
         else
@@ -57,7 +63,7 @@ public:
             if (inserted)
                 return std::strcmp(pos.first->get_str(), str) == 0;
             auto mem = ::operator new(sizeof(node) + length + 1);
-            pos.first->next = ::new(mem) node(str, hash, pos.second);
+            pos.first->next = ::new(mem) node(prefix, str, hash, pos.second);
             ++size;
         }
         return true;
@@ -133,7 +139,7 @@ sid::map_database::map_database(std::size_t size, double max_load_factor)
 
 sid::map_database::~map_database() noexcept {}
 
-bool sid::map_database::insert(hash_type hash, const char *str, std::size_t length)
+bool sid::map_database::insert(hash_type hash, const char *prefix, const char *str, std::size_t length)
 {
     static constexpr auto growth_factor = 2;
     if (no_items_ + 1 >= next_resize_)
@@ -147,7 +153,7 @@ bool sid::map_database::insert(hash_type hash, const char *str, std::size_t leng
         no_buckets_ = new_size;
         next_resize_ = std::floor(no_buckets_ * max_load_factor_);
     }
-    return buckets_[hash % no_buckets_].insert(no_items_, hash, str, length);
+    return buckets_[hash % no_buckets_].insert(no_items_, hash, prefix, str, length);
 }
 
 const char* sid::map_database::lookup(hash_type hash) const noexcept

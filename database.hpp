@@ -31,7 +31,7 @@ namespace foonathan { namespace string_id
         /// \detail The string must be copied prior to stroing, it may not stay valid.<br>
         /// It should return \c false if there is already a different string stored for that hash,
         /// that is if it encounters a collision.
-        virtual bool insert(hash_type hash, const char* str, std::size_t length) = 0;
+        virtual bool insert(hash_type hash, const char *prefix, const char* str, std::size_t length) = 0;
         
         /// \brief Should return the string stored with a given hash.
         /// \detail The return value should stay valid as long as the database exists.<br>
@@ -50,7 +50,7 @@ namespace foonathan { namespace string_id
     class dummy_database : public basic_database
     {
     public:        
-        bool insert(hash_type, const char *, std::size_t) override
+        bool insert(hash_type, const char*, const char *, std::size_t) override
         {
             return true;
         }
@@ -69,7 +69,7 @@ namespace foonathan { namespace string_id
         map_database(std::size_t size = 1024, double max_load_factor = 1.0);
         ~map_database() noexcept;
         
-        bool insert(hash_type hash, const char *str, std::size_t length) override;
+        bool insert(hash_type hash, const char *prefix, const char *str, std::size_t length) override;
         const char* lookup(hash_type hash) const noexcept override;
         
     private:        
@@ -91,10 +91,10 @@ namespace foonathan { namespace string_id
         
         using Database::Database;
         
-        bool insert(hash_type hash, const char *str, std::size_t length) override
+        bool insert(hash_type hash, const char *prefix, const char *str, std::size_t length) override
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return Database::insert(hash, str, length);
+            return Database::insert(hash, prefix, str, length);
         }
         
         const char* lookup(hash_type hash) const noexcept override

@@ -30,11 +30,27 @@ namespace foonathan { namespace string_id
         string_id(const char *str, std::size_t length, basic_database &db);
         /// @}
         
+        /// @{
+        /// \brief Creates a new id with a given prefix.
+        /// \detail The new id will be inserted into the same database as the prefix.<br>
+        //// Otherwise the same as other constructor.
+        string_id(const string_id &prefix, const char *str);
+        
+        string_id(const string_id &prefix,
+                  const char *str, std::size_t length);
+        /// @}
+        
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
         hash_type hash_code() const noexcept
         {
             return id_;
+        }
+        
+        /// \brief Returns a reference to the database.
+        basic_database& database() const noexcept
+        {
+            return *db_;
         }
         
         /// \brief Returns the string value itself.
@@ -51,27 +67,27 @@ namespace foonathan { namespace string_id
             return a.db_ == b.db_ && a.id_ == b.id_;
         }
         
-        friend bool operator==(hash_type a, string_id b) noexcept
+        friend bool operator==(hash_type a, const string_id &b) noexcept
         {
             return a == b.id_;
         }
         
-        friend bool operator==(string_id a, hash_type b) noexcept
+        friend bool operator==(const string_id &a, hash_type b) noexcept
         {
             return a.id_ == b;
         }
         
-        friend bool operator!=(string_id a, string_id b) noexcept
+        friend bool operator!=(const string_id &a, const string_id &b) noexcept
         {
             return !(a == b);
         }
         
-        friend bool operator!=(hash_type a, string_id b) noexcept
+        friend bool operator!=(hash_type a, const string_id &b) noexcept
         {
             return !(a == b);
         }
         
-        friend bool operator!=(string_id a, hash_type b) noexcept
+        friend bool operator!=(const string_id &a, hash_type b) noexcept
         {
             return !(a == b);
         }
