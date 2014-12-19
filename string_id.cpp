@@ -34,7 +34,8 @@ sid::string_id::string_id(const string_id &prefix, const char *str)
 sid::string_id::string_id(const string_id &prefix, const char *str, std::size_t length)
 : id_(detail::sid_hash(str, prefix.hash_code())), db_(prefix.db_)
 {
-    if (!db_->insert(id_, db_->lookup(prefix.hash_code()), str, length))
+    auto prefix_str = db_->lookup(prefix.hash_code());
+    if (!db_->insert(id_, prefix_str, str, length + std::strlen(prefix_str)))
         handle_collision(*db_, id_, str);
 }
 

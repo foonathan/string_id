@@ -21,6 +21,8 @@ else()
             database.cpp
             error.cpp
             error.hpp
+            generator.cpp
+            generator.hpp
             hash.hpp
             string_id.cpp
             string_id.hpp)

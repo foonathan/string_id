@@ -1,3 +1,7 @@
+// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// This file is subject to the license terms in the LICENSE file
+// found in the top-level directory of this distribution.
+
 #include "database.hpp"
 
 #include <cassert>
@@ -61,7 +65,13 @@ public:
             auto inserted = false;
             auto pos = insert_pos(hash, inserted);
             if (inserted)
-                return std::strcmp(pos.first->get_str(), str) == 0;
+            {
+                auto other_str = pos.first->get_str();
+                while (prefix && *prefix)
+                    if (*prefix++ != *other_str++)
+                        return false;
+                return std::strcmp(str, other_str) == 0;
+            }
             auto mem = ::operator new(sizeof(node) + length + 1);
             pos.first->next = ::new(mem) node(prefix, str, hash, pos.second);
             ++size;
@@ -86,7 +96,7 @@ public:
             {
                 auto inserted = false;
                 auto pos = list.insert_pos(cur->hash, inserted);
-                assert(!insert && "element can't be there already");
+                assert(!inserted && "element can't be there already");
                 pos.first->next = cur;
                 cur->next = pos.second;
             }
