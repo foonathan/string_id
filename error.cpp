@@ -52,7 +52,7 @@ namespace
     bool default_generation_error_handler(std::size_t no, const char *generator_name,
                                           sid::hash_type, const char *)
     {
-        if (no == no_tries_generation)
+        if (no >= no_tries_generation)
             throw sid::generation_error(generator_name);
         return true;
     }

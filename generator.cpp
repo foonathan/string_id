@@ -41,7 +41,7 @@ sid::string_id sid::counter_generator::operator()()
     // 4 times sizeof(state) is enough for the integer representation
     static constexpr auto max_size = 4 * sizeof(state);
     char string[max_size];
-    return detail::try_generate("sid::counter_generator",
+    return detail::try_generate("foonathan::string_id::counter_generator",
                                 [&]()
                                 {
                                     return to_string(counter_++, string, string + max_size, length_);

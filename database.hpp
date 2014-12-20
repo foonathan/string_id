@@ -27,17 +27,21 @@ namespace foonathan { namespace string_id
         basic_database(basic_database &&) = delete;
         /// @}
         
+        /// \brief The status of an insert operation.
         enum insert_status
         {
+            /// \brief Two different strings collide on the same value.
             collision,
+            /// \brief A new string was inserted.
             new_string,
+            /// \brief The string already existed inside the database.
             old_string
         };
         
-        /// \brief Should insert a new hash-string-pair into the internal database.
+        /// \brief Should insert a new hash-string-pair with prefix (optional) into the internal database.
         /// \detail The string must be copied prior to stroing, it may not stay valid.<br>
-        /// It should return \c false if there is already a different string stored for that hash,
-        /// that is if it encounters a collision.
+        /// The prefix pointer may be \c nullptr, if it is not, it should be prepended to the string,
+        /// length is the length of prefix + str. All strings are null-terminated.
         virtual insert_status insert(hash_type hash, const char *prefix, const char* str, std::size_t length) = 0;
         
         /// \brief Should return the string stored with a given hash.

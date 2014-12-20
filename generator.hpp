@@ -28,43 +28,30 @@ namespace foonathan { namespace string_id
         }
     }
     
-    template <class Generator>
-    class generator
-    {
-    public:
-        using state = Generator;
-        
-        explicit generator(const string_id &prefix,
-                           state s = state())
-        : prefix_(prefix), state_(s) {}
-        
-        string_id operator()()
-        {
-            return detail::try_generate("sid::generator",
-                                        [this](){return string_info(state_());}, prefix_);
-        }
-        
-        void discard(unsigned long long n)
-        {
-            state_.discard(n);
-        }
-        
-    private:
-        string_id prefix_;
-        state state_;
-    };
-    
+    /// \brief A generator that generates string ids with a prefix followed by a number.
+    /// \detail It can be used by multiple threads at the same time.
     class counter_generator
     {
     public:
+        /// \brief The type of the internal state, an unsigned integer.
         using state = unsigned long long;
         
+        /// \brief Creates a new generator with given prefix.
+        /// \detail \c counter is the start value for the counter,
+        /// \c length the length of the number appended. If it is \c 0,
+        /// there are no restrictions. Else it will either prepend zeros to the number
+        /// or cut the number to \c length digits.
+        /// \note For implementation reasons, \c length can't be higher than a certain value.
+        /// If it is, it behaves as if \c length has this certain value.
         explicit counter_generator(const string_id &prefix,
-                                   state counter = {}, std::size_t length = 0)
+                                   state counter = 0, std::size_t length = 0)
         : prefix_(prefix), counter_(counter), length_(length) {}
         
+        /// \brief Generates a new \ref string_id.
+        /// \detail If it was already generated previously, the \ref generator_error_handler will be called in a loop as described there.
         string_id operator()();
-                
+        
+        /// \brief Discards a number of states by advancing the counter.
         void discard(unsigned long long n) noexcept;
         
     private:
@@ -73,42 +60,57 @@ namespace foonathan { namespace string_id
         std::size_t length_;
     };
     
+    /// \brief Information about the characters used by \ref random_generator.
     struct character_table
     {
+        /// \brief A pointer to an array of characters.
         const char* characters;
+        /// \brief The length of it.
         std::size_t no_characters;
         
+        /// \brief Creates a new table.
         constexpr character_table(const char* chars, std::size_t no) noexcept
         : characters(chars), no_characters(no) {}
         
+        /// \brief A table with all English letters (both cases) and digits.
         static character_table alnum() noexcept;
+        
+        /// \brief A table with all English letters (both cases).
         static character_table alpha() noexcept;
     };
     
+    /// \brief A generator that generates string ids by appendending random characters to a prefix.
+    /// \detail This class is thread safe if the random number generator is thread safe.
     template <class RandomNumberGenerator, std::size_t Length>
     class random_generator
     {        
     public:        
+        /// \brief The state of generator, a random number generator like \c std::mt19937.
         using state = RandomNumberGenerator;
         
+        /// \brief The number of characters appended.
         static constexpr std::size_t length() noexcept
         {
             return Length;
         }
         
+        /// \brief Creates a new generator with given prefix, random number generator and character table.
+        /// \detail By default is uses the table \ref character_table::alnum().
         explicit random_generator(const string_id &prefix,
                                   state s = state(),
                                   character_table table = character_table::alnum())
         : prefix_(prefix), state_(std::move(s)),
           table_(table) {}
         
+        /// \brief Generates a new \ref string_id.
+        /// \detail If it was already generated previously, the \ref generator_error_handler will be called in a loop as described there.
         string_id operator()()
         {
             std::uniform_int_distribution<std::size_t>
                 dist(0, table_.no_characters - 1);
             char random[Length + 1];
             random[Length] = 0;
-            return detail::try_generate("sid::random_generator",
+            return detail::try_generate("foonathan::string_id::random_generator",
                     [&]()
                     {
                         for (std::size_t i = 0u; i != Length; ++i)
@@ -117,6 +119,7 @@ namespace foonathan { namespace string_id
                     }, prefix_);
         }
         
+        /// \brief Discards a certain number of states, this forwards to the random number generator.
         void discard(unsigned long long n)
         {
             state_.discard(n);

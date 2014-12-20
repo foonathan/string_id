@@ -10,7 +10,8 @@
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
-{    
+{
+    /// \brief The base class for all custom exception classes of this library.
     class error : public std::logic_error
     {
     protected:
@@ -26,7 +27,7 @@ namespace foonathan { namespace string_id
     /// \detail This function is thread safe.
     collision_handler set_collision_handler(collision_handler h);
     
-    /// \brief Returns the current collision handler.
+    /// \brief Returns the current \ref collision_handler.
     collision_handler get_collision_handler();
     
     /// \brief The exception class thrown by the default \ref collision_handler.
@@ -64,21 +65,33 @@ namespace foonathan { namespace string_id
         hash_type hash_;
     };
     
+    /// \brief The type of the generator error handler.
+    /// \detail It will be called when a generator would generate a \ref string_id that already was generated.
+    /// The generator will try again until the handler returns \c false in which case it just returns the old \c string_id.
+    /// It passes the number of tries, the name of the generator and the hash and string of the generated \c string_id.<br>
+    /// The default handler allows 8 tries and then throws an exception of type \ref generation_error.
     using generation_error_handler = bool(*)(std::size_t no, const char *generator_name,
                                              hash_type hash, const char *str);
     
+    /// \brief Exchanges the \ref generation_error_handler.
+    /// \detail This function is thread safe.
     generation_error_handler set_generation_error_handler(generation_error_handler h);
+    
+    /// \brief Returns the current \ref generation_error_handler.
     generation_error_handler get_generation_error_handler();
     
+    /// \brief The exception class thrown by the default \ref generation_error_handler.
     class generation_error : public error
     {
     public:
         //=== constructor/destructor ===//
+        /// \brief Creates it by giving it the name of the generator.
         generation_error(const char *generator_name);
         
         ~generation_error() noexcept override = default;
         
         //=== accessors ===//
+        /// \brief Returns the name of the generator.
         const char* generator_name() const noexcept
         {
             return name_.c_str();

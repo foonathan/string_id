@@ -15,21 +15,31 @@
 
 namespace foonathan { namespace string_id
 {
+    /// \brief Information about a string.
+    /// \detail It is used to reduce the number of constructors of \ref string_id.
     struct string_info
     {
+        /// \brief A pointer to a null-terminated string.
         const char *string;
+        /// \brief The length of this string.
         std::size_t length;
         
+        /// \brief Creates it from a null-terminated string (implicit conversion).
         string_info(const char *str) noexcept
         : string(str), length(std::strlen(str)) {}
         
-        constexpr string_info(const char *str, std::size_t length) noexcept
-        : string(str), length(length) {}
+        /// \brief Creates it from a null-terminated string whose length is known.
+        /// \detail The null-byte must be at index \c length!
+        string_info(const char *str, std::size_t length)
+        : string(str), length(length)
+        {
+            assert(string[length] == 0 && "wrong length of string or not null-terminated");
+        }
     };
     
     /// \brief The string identifier class.
     /// \detail This is a lightweight class to store strings.<br>
-    /// It only stores a hash of the string allowing fast copying and comparisions.
+    /// It only stores a hash of the string allowing fast copying and comparisons.
     class string_id
     {
     public:
@@ -38,15 +48,22 @@ namespace foonathan { namespace string_id
         /// \detail It will insert the string into the given \ref database which will copy it.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
         string_id(string_info str, basic_database &db);
-        string_id(string_info str, basic_database &db,
-                 basic_database::insert_status &status);
         
         /// \brief Creates a new id with a given prefix.
         /// \detail The new id will be inserted into the same database as the prefix.<br>
         //// Otherwise the same as other constructor.
         string_id(const string_id &prefix, string_info str);
+        
+        /// @{
+        /// \brief Sames as other constructor versions but instead of calling the \ref collision_handler,
+        /// they set the output parameter to the appropriate status.
+        /// \detail This also allows information whether or not the string was already stored inside the database.
+        string_id(string_info str, basic_database &db,
+                 basic_database::insert_status &status);
+                 
         string_id(const string_id &prefix, string_info str,
                   basic_database::insert_status &status);
+        /// @}
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
