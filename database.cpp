@@ -52,7 +52,8 @@ public:
     }
     
     // inserts new node, checks for collisions and updates number of nodes
-    bool insert(std::size_t &size, hash_type hash, const char *prefix, const char *str, std::size_t length)
+    basic_database::insert_status insert(std::size_t &size, hash_type hash,
+                                         const char *prefix, const char *str, std::size_t length)
     {
         if (!head_)
         {
@@ -69,14 +70,15 @@ public:
                 auto other_str = pos.first->get_str();
                 while (prefix && *prefix)
                     if (*prefix++ != *other_str++)
-                        return false;
-                return std::strcmp(str, other_str) == 0;
+                        return basic_database::collision;
+                return std::strcmp(str, other_str) == 0 ?
+                       basic_database::old_string : basic_database::collision;
             }
             auto mem = ::operator new(sizeof(node) + length + 1);
             pos.first->next = ::new(mem) node(prefix, str, hash, pos.second);
             ++size;
         }
-        return true;
+        return basic_database::new_string;
     }
     
     // inserts all nodes into new buckets, this list is empty afterwards
@@ -118,7 +120,14 @@ private:
     // assumes head isn't nullptr
     std::pair<node*, node*> insert_pos(hash_type hash, bool &inserted)
     {
+        assert(head_);
         auto cur = head_->next, prev = head_;
+        if (!cur && head_->hash == hash)
+        {
+            inserted = true;
+            return std::make_pair(head_, head_);
+        }
+        
         while (cur)
         {
             if (cur->hash < hash)
@@ -149,7 +158,8 @@ sid::map_database::map_database(std::size_t size, double max_load_factor)
 
 sid::map_database::~map_database() noexcept {}
 
-bool sid::map_database::insert(hash_type hash, const char *prefix, const char *str, std::size_t length)
+sid::basic_database::insert_status sid::map_database::insert(hash_type hash,
+                    const char *prefix, const char *str, std::size_t length)
 {
     static constexpr auto growth_factor = 2;
     if (no_items_ + 1 >= next_resize_)

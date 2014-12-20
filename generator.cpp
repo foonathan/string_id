@@ -11,44 +11,41 @@
 namespace sid = foonathan::string_id;
 
 namespace
-{
-    std::pair<char*, std::size_t> to_string(char *begin, char *end,
-                                            sid::counter_generator::state s) noexcept
+{    
+    sid::string_info to_string(sid::counter_generator::state s, char *begin, char *end,
+                               std::size_t length)
     {
         *--end = 0;
         auto cur = end;
-        while (--cur != begin)
+        std::size_t i = 0;
+        
+        do
         {
-            *cur = (s % 10) + '0';
+            *--cur = '0' + (s % 10);
             s /= 10;
-            if (s == 0u)
-                return {cur, end - cur};
-        }
-        assert(false && "not sufficient array size");
-        return {};
+            ++i;
+        } while (s != 0u);
+        
+        if (i < length)
+            for (; cur - 1 != begin && i < length; ++i)
+                *--cur = '0';
+        else if (i > length)
+            cur += i - length;
+            
+        return sid::string_info(cur, end - cur);
     }
 }
 
 sid::string_id sid::counter_generator::operator()()
 {
-    // 4 times sizeof(s) is enough for the integer representation
-    static constexpr auto max_size = 4 * sizeof(state) + 1;
+    // 4 times sizeof(state) is enough for the integer representation
+    static constexpr auto max_size = 4 * sizeof(state);
     char string[max_size];
-    auto number = to_string(string, string + max_size, counter_++);
-    if (length_ != 0)
-        if (number.second < length_)
-        {
-            auto to_fill = length_ - number.second;
-            number.first = number.first - to_fill;
-            number.second = to_fill;
-            std::memset(number.first, '0', to_fill);
-        }
-        else if (number.second > length_)
-        {
-            number.first = string + max_size - length_ - 1;
-            number.second = length_;
-        }
-    return {prefix_, number.first, number.second};
+    return detail::try_generate("sid::counter_generator",
+                                [&]()
+                                {
+                                    return to_string(counter_++, string, string + max_size, length_);
+                                }, prefix_);
 }
 
 void sid::counter_generator::discard(unsigned long long n) noexcept

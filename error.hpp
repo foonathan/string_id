@@ -10,7 +10,13 @@
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
-{
+{    
+    class error : public std::logic_error
+    {
+    protected:
+        using logic_error::logic_error;
+    };
+    
     /// \brief The type of the collision handler.
     /// \detail It will be called when a string hashing results in a collision giving it the two strings collided.
     /// The default handler throws an exception of type \ref collision_error.
@@ -24,7 +30,7 @@ namespace foonathan { namespace string_id
     collision_handler get_collision_handler();
     
     /// \brief The exception class thrown by the default \ref collision_handler.
-    class collision_error : public std::logic_error
+    class collision_error : public error
     {
     public:
         //=== constructor/destructor ===//
@@ -56,6 +62,30 @@ namespace foonathan { namespace string_id
     private:
         std::string a_, b_;
         hash_type hash_;
+    };
+    
+    using generation_error_handler = bool(*)(std::size_t no, const char *generator_name,
+                                             hash_type hash, const char *str);
+    
+    generation_error_handler set_generation_error_handler(generation_error_handler h);
+    generation_error_handler get_generation_error_handler();
+    
+    class generation_error : public error
+    {
+    public:
+        //=== constructor/destructor ===//
+        generation_error(const char *generator_name);
+        
+        ~generation_error() noexcept override = default;
+        
+        //=== accessors ===//
+        const char* generator_name() const noexcept
+        {
+            return name_.c_str();
+        }
+        
+    private:
+        std::string name_;
     };
 }} // namespace foonathan::string_id
 

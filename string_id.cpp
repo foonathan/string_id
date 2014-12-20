@@ -4,8 +4,6 @@
 
 #include "string_id.hpp"
 
-#include <cstring>
-
 namespace sid = foonathan::string_id;
 
 namespace
@@ -18,25 +16,35 @@ namespace
     }
 }
 
-sid::string_id::string_id(const char *str, basic_database &db)
-: string_id(str, std::strlen(str), db) {}
-
-sid::string_id::string_id(const char *str, std::size_t length, basic_database &db)
-: id_(detail::sid_hash(str)), db_(&db)
+sid::string_id::string_id(string_info str, basic_database &db)
 {
-    if (!db_->insert(id_, nullptr, str, length))
-        handle_collision(*db_, id_, str);
+    basic_database::insert_status status;
+    *this = string_id(str, db, status);
+    if (!status)
+        handle_collision(*db_, id_, str.string);
 }
 
-sid::string_id::string_id(const string_id &prefix, const char *str)
-: string_id(prefix, str, std::strlen(str)) {}
+sid::string_id::string_id(string_info str, basic_database &db,
+                          basic_database::insert_status &status)
+: id_(detail::sid_hash(str.string)), db_(&db)
+{
+    status = db_->insert(id_, nullptr, str.string, str.length);
+}
 
-sid::string_id::string_id(const string_id &prefix, const char *str, std::size_t length)
-: id_(detail::sid_hash(str, prefix.hash_code())), db_(prefix.db_)
+sid::string_id::string_id(const string_id &prefix, string_info str)
+{
+    basic_database::insert_status status;
+    *this = string_id(prefix, str, status);
+    if (!status)
+        handle_collision(*db_, id_, str.string);
+}
+
+sid::string_id::string_id(const string_id &prefix, string_info str,
+                          basic_database::insert_status &status)
+: id_(detail::sid_hash(str.string, prefix.hash_code())), db_(prefix.db_)
 {
     auto prefix_str = db_->lookup(prefix.hash_code());
-    if (!db_->insert(id_, prefix_str, str, length + std::strlen(prefix_str)))
-        handle_collision(*db_, id_, str);
+    status = db_->insert(id_, prefix_str, str.string, str.length + std::strlen(prefix_str));
 }
 
 const char* sid::string_id::string() const noexcept

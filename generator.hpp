@@ -12,6 +12,22 @@
 
 namespace foonathan { namespace string_id
 {
+    namespace detail
+    {
+        template <typename Generator>
+        string_id try_generate(const char *name, Generator generator, const string_id &prefix)
+        {
+            basic_database::insert_status status;
+            auto result = string_id(prefix, generator(), status);
+            for (std::size_t counter = 1;
+                 status != basic_database::new_string &&
+                 get_generation_error_handler()(counter, name, result.hash_code(), result.string());
+                 ++counter)
+                result = string_id(prefix, generator(), status);
+            return result;
+        }
+    }
+    
     template <class Generator>
     class generator
     {
@@ -24,7 +40,8 @@ namespace foonathan { namespace string_id
         
         string_id operator()()
         {
-            return {prefix_, state_()};
+            return detail::try_generate("sid::generator",
+                                        [this](){return string_info(state_());}, prefix_);
         }
         
         void discard(unsigned long long n)
@@ -91,9 +108,13 @@ namespace foonathan { namespace string_id
                 dist(0, table_.no_characters - 1);
             char random[Length + 1];
             random[Length] = 0;
-            for (std::size_t i = 0u; i != Length; ++i)
-                random[i] = table_.characters[dist(state_)];
-            return {prefix_, random, Length};
+            return detail::try_generate("sid::random_generator",
+                    [&]()
+                    {
+                        for (std::size_t i = 0u; i != Length; ++i)
+                            random[i] = table_.characters[dist(state_)];
+                        return string_info(random, Length);
+                    }, prefix_);
         }
         
         void discard(unsigned long long n)

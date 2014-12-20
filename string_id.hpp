@@ -5,6 +5,7 @@
 #ifndef FOONATHAN_STRING_ID_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_HPP_INCLUDED
 
+#include <cstring>
 #include <functional>
 
 #include "hash.hpp"
@@ -14,6 +15,18 @@
 
 namespace foonathan { namespace string_id
 {
+    struct string_info
+    {
+        const char *string;
+        std::size_t length;
+        
+        string_info(const char *str) noexcept
+        : string(str), length(std::strlen(str)) {}
+        
+        constexpr string_info(const char *str, std::size_t length) noexcept
+        : string(str), length(length) {}
+    };
+    
     /// \brief The string identifier class.
     /// \detail This is a lightweight class to store strings.<br>
     /// It only stores a hash of the string allowing fast copying and comparisions.
@@ -21,24 +34,19 @@ namespace foonathan { namespace string_id
     {
     public:
         //=== constructors ===//
-        /// @{
         /// \brief Creates a new id by hashing a given string.
         /// \detail It will insert the string into the given \ref database which will copy it.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
-        string_id(const char *str, basic_database &db);
+        string_id(string_info str, basic_database &db);
+        string_id(string_info str, basic_database &db,
+                 basic_database::insert_status &status);
         
-        string_id(const char *str, std::size_t length, basic_database &db);
-        /// @}
-        
-        /// @{
         /// \brief Creates a new id with a given prefix.
         /// \detail The new id will be inserted into the same database as the prefix.<br>
         //// Otherwise the same as other constructor.
-        string_id(const string_id &prefix, const char *str);
-        
-        string_id(const string_id &prefix,
-                  const char *str, std::size_t length);
-        /// @}
+        string_id(const string_id &prefix, string_info str);
+        string_id(const string_id &prefix, string_info str,
+                  basic_database::insert_status &status);
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
