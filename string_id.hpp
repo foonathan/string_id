@@ -5,6 +5,7 @@
 #ifndef FOONATHAN_STRING_ID_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_HPP_INCLUDED
 
+#include <cassert>
 #include <cstring>
 #include <functional>
 

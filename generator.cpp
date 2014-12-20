@@ -29,7 +29,7 @@ namespace
         if (i < length)
             for (; cur - 1 != begin && i < length; ++i)
                 *--cur = '0';
-        else if (i > length)
+        else if (length && i > length)
             cur += i - length;
             
         return sid::string_info(cur, end - cur);

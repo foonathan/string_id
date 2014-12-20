@@ -10,6 +10,21 @@
 
 namespace sid = foonathan::string_id;
 
+namespace
+{
+    // equivalent to prefix + str == other_str for std::string
+    bool strequal(const char *prefix, const char *str, const char *other_str) noexcept
+    {
+        if (prefix)
+        {
+            while (*prefix)
+                if (*prefix++ != *other_str++)
+                    return false;
+        }
+        return std::strcmp(str, other_str) == 0;
+    }
+}
+
 class sid::map_database::node_list
 {    
     struct node
@@ -36,6 +51,23 @@ class sid::map_database::node_list
             return static_cast<const char*>(mem) + sizeof(node);
         }
     };
+    
+    struct insert_pos_t
+    {        
+        bool exists; // if true: cur set, else: prev and next set
+        
+        node*& prev;
+        node* next;
+        
+        node* cur;
+        
+        insert_pos_t(node*& prev, node *next) noexcept
+        : exists(false), prev(prev), next(next), cur(nullptr) {}
+        
+        insert_pos_t(node *cur) noexcept
+        : exists(true), prev(this->cur), next(nullptr), cur(cur) {}
+    };
+    
 public:
     node_list() noexcept
     : head_(nullptr) {}
@@ -55,29 +87,13 @@ public:
     basic_database::insert_status insert(std::size_t &size, hash_type hash,
                                          const char *prefix, const char *str, std::size_t length)
     {
-        if (!head_)
-        {
-            auto mem = ::operator new(sizeof(node) + length + 1);
-            head_ = ::new(mem) node(prefix, str, hash, nullptr);
-            ++size;
-        }
-        else
-        {
-            auto inserted = false;
-            auto pos = insert_pos(hash, inserted);
-            if (inserted)
-            {
-                auto other_str = pos.first->get_str();
-                while (prefix && *prefix)
-                    if (*prefix++ != *other_str++)
-                        return basic_database::collision;
-                return std::strcmp(str, other_str) == 0 ?
-                       basic_database::old_string : basic_database::collision;
-            }
-            auto mem = ::operator new(sizeof(node) + length + 1);
-            pos.first->next = ::new(mem) node(prefix, str, hash, pos.second);
-            ++size;
-        }
+        auto pos = insert_pos(hash);
+        if (pos.exists)
+            return strequal(prefix, str, pos.cur->get_str()) ?
+                   basic_database::old_string : basic_database::collision;
+        auto mem = ::operator new(sizeof(node) + length + 1);
+        pos.prev = ::new(mem) node(prefix, str, hash, pos.next);
+        ++size;
         return basic_database::new_string;
     }
     
@@ -88,20 +104,10 @@ public:
         while (cur)
         {
             auto next = cur->next;
-            auto& list = buckets[cur->hash % size];
-            if (!list.head_)
-            {
-                list.head_ = cur;
-                cur->next = nullptr;
-            }
-            else
-            {
-                auto inserted = false;
-                auto pos = list.insert_pos(cur->hash, inserted);
-                assert(!inserted && "element can't be there already");
-                pos.first->next = cur;
-                cur->next = pos.second;
-            }
+            auto pos = buckets[cur->hash % size].insert_pos(cur->hash);
+            assert(!pos.exists && "element can't be there already");
+            pos.prev = cur;
+            cur->next = pos.next;
             cur = next;
         }
         head_ = nullptr;
@@ -117,18 +123,10 @@ public:
     }
     
 private:
-    // assumes head isn't nullptr
-    std::pair<node*, node*> insert_pos(hash_type hash, bool &inserted)
+    insert_pos_t insert_pos(hash_type hash) noexcept
     {
-        assert(head_);
-        auto cur = head_->next, prev = head_;
-        if (!cur && head_->hash == hash)
-        {
-            inserted = true;
-            return std::make_pair(head_, head_);
-        }
-        
-        while (cur)
+        node *cur = head_, *prev = nullptr;
+        while (cur && cur->hash <= hash)
         {
             if (cur->hash < hash)
             {
@@ -136,14 +134,9 @@ private:
                 cur = cur->next;
             }
             else if (cur->hash == hash)
-            {
-                inserted = true;
-                return std::make_pair(cur, cur);
-            }
-            else
-                break;
+                return {cur};
         }
-        return std::make_pair(prev, cur);
+        return {prev ? prev->next : head_, cur};
     }
     
     node *head_;
