@@ -5,6 +5,7 @@
 #ifndef FOONATHAN_STRING_ID_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_HPP_INCLUDED
 
+#include <cstring>
 #include <functional>
 
 #include "hash.hpp"
@@ -14,20 +15,54 @@
 
 namespace foonathan { namespace string_id
 {
+    /// \brief Information about a string.
+    /// \detail It is used to reduce the number of constructors of \ref string_id.
+    struct string_info
+    {
+        /// \brief A pointer to a null-terminated string.
+        const char *string;
+        /// \brief The length of this string.
+        std::size_t length;
+        
+        /// \brief Creates it from a null-terminated string (implicit conversion).
+        string_info(const char *str) noexcept
+        : string(str), length(std::strlen(str)) {}
+        
+        /// \brief Creates it from a null-terminated string whose length is known.
+        /// \detail The null-byte must be at index \c length!
+        string_info(const char *str, std::size_t length)
+        : string(str), length(length)
+        {
+            assert(string[length] == 0 && "wrong length of string or not null-terminated");
+        }
+    };
+    
     /// \brief The string identifier class.
     /// \detail This is a lightweight class to store strings.<br>
-    /// It only stores a hash of the string allowing fast copying and comparisions.
+    /// It only stores a hash of the string allowing fast copying and comparisons.
     class string_id
     {
     public:
         //=== constructors ===//
-        /// @{
         /// \brief Creates a new id by hashing a given string.
         /// \detail It will insert the string into the given \ref database which will copy it.<br>
         /// If it encounters a collision, the \ref collision_handler will be called.
-        string_id(const char *str, basic_database &db);
+        string_id(string_info str, basic_database &db);
         
-        string_id(const char *str, std::size_t length, basic_database &db);
+        /// \brief Creates a new id with a given prefix.
+        /// \detail The new id will be inserted into the same database as the prefix.<br>
+        //// Otherwise the same as other constructor.
+        string_id(const string_id &prefix, string_info str);
+        
+        /// @{
+        /// \brief Sames as other constructor versions but instead of calling the \ref collision_handler,
+        /// they set the output parameter to the appropriate status.
+        /// \detail This also allows information whether or not the string was already stored inside the database.
+        string_id(string_info str, basic_database &db,
+                 basic_database::insert_status &status);
+                 
+        string_id(const string_id &prefix, string_info str,
+                  basic_database::insert_status &status);
         /// @}
         
         //=== accessors ===//
@@ -35,6 +70,12 @@ namespace foonathan { namespace string_id
         hash_type hash_code() const noexcept
         {
             return id_;
+        }
+        
+        /// \brief Returns a reference to the database.
+        basic_database& database() const noexcept
+        {
+            return *db_;
         }
         
         /// \brief Returns the string value itself.
@@ -51,27 +92,27 @@ namespace foonathan { namespace string_id
             return a.db_ == b.db_ && a.id_ == b.id_;
         }
         
-        friend bool operator==(hash_type a, string_id b) noexcept
+        friend bool operator==(hash_type a, const string_id &b) noexcept
         {
             return a == b.id_;
         }
         
-        friend bool operator==(string_id a, hash_type b) noexcept
+        friend bool operator==(const string_id &a, hash_type b) noexcept
         {
             return a.id_ == b;
         }
         
-        friend bool operator!=(string_id a, string_id b) noexcept
+        friend bool operator!=(const string_id &a, const string_id &b) noexcept
         {
             return !(a == b);
         }
         
-        friend bool operator!=(hash_type a, string_id b) noexcept
+        friend bool operator!=(hash_type a, const string_id &b) noexcept
         {
             return !(a == b);
         }
         
-        friend bool operator!=(string_id a, hash_type b) noexcept
+        friend bool operator!=(const string_id &a, hash_type b) noexcept
         {
             return !(a == b);
         }
