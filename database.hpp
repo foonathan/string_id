@@ -7,61 +7,24 @@
 
 #include <memory>
 #include <mutex>
-#include <unordered_map>
 
+#include "basic_database.hpp"
 #include "config.hpp"
-#include "hash.hpp"
 
 namespace foonathan { namespace string_id
-{       
-    /// \brief The interface for all databases.
-    /// \detail You can derive own databases from it.
-    class basic_database
-    {
-    public:        
-        /// @{
-        /// \brief Databases are not copy- or moveable.
-        /// \detail You must not write a swap function either!<br>
-        /// This has implementation reasons.
-        basic_database(const basic_database &) = delete;
-        basic_database(basic_database &&) = delete;
-        /// @}
-        
-        /// \brief The status of an insert operation.
-        enum insert_status
-        {
-            /// \brief Two different strings collide on the same value.
-            collision,
-            /// \brief A new string was inserted.
-            new_string,
-            /// \brief The string already existed inside the database.
-            old_string
-        };
-        
-        /// \brief Should insert a new hash-string-pair with prefix (optional) into the internal database.
-        /// \detail The string must be copied prior to stroing, it may not stay valid.<br>
-        /// The prefix pointer may be \c nullptr, if it is not, it should be prepended to the string,
-        /// length is the length of prefix + str. All strings are null-terminated.
-        virtual insert_status insert(hash_type hash, const char *prefix, const char* str, std::size_t length) = 0;
-        
-        /// \brief Should return the string stored with a given hash.
-        /// \detail The return value should stay valid as long as the database exists.<br>
-        /// It is guaranteed that the hash value has been inserted before.<br>
-        /// If there is no way to retrieve a string it should return an error message.
-        virtual const char* lookup(hash_type hash) const noexcept = 0;
-        
-    protected:
-        basic_database() noexcept = default;
-        ~basic_database() noexcept = default;
-    };
-    
+{    
     /// \brief A database that doesn't store the string-values.
     /// \detail It does not detect collisions or allows retrieving,
     /// \c lookup() returns "string_id database disabled".
     class dummy_database : public basic_database
     {
     public:        
-        insert_status insert(hash_type, const char*, const char *, std::size_t) override
+        insert_status insert(hash_type, const char *, std::size_t) override
+        {
+            return new_string;
+        }
+        
+        insert_status insert_prefix(hash_type, hash_type, const char *, std::size_t) override
         {
             return new_string;
         }
@@ -80,10 +43,14 @@ namespace foonathan { namespace string_id
         map_database(std::size_t size = 1024, double max_load_factor = 1.0);
         ~map_database() noexcept;
         
-        insert_status insert(hash_type hash, const char *prefix, const char *str, std::size_t length) override;
+        insert_status insert(hash_type hash, const char *str, std::size_t length) override;
+        insert_status insert_prefix(hash_type hash, hash_type prefix,
+                                    const char *str, std::size_t length) override;
         const char* lookup(hash_type hash) const noexcept override;
         
     private:        
+        void rehash();
+        
         class node_list;
         std::unique_ptr<node_list[]> buckets_;
         std::size_t no_items_, no_buckets_;
@@ -102,11 +69,18 @@ namespace foonathan { namespace string_id
         
         using Database::Database;
         
-        typename Database::insert_status insert(hash_type hash, const char *prefix,
-                                       const char *str, std::size_t length) override
+        auto insert(hash_type hash, const char *str, std::size_t length) 
+        -> typename Database::insert_status override
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return Database::insert(hash, prefix, str, length);
+            return Database::insert(hash, str, length);
+        }
+        
+        auto insert_prefix(hash_type hash, hash_type prefix, const char *str, std::size_t length) 
+        -> typename Database::insert_status override
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return Database::insert_prefix(hash, prefix, str, length);
         }
         
         const char* lookup(hash_type hash) const noexcept override

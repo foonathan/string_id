@@ -16,7 +16,8 @@ else()
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
 	               "${CMAKE_CURRENT_BINARY_DIR}/config.hpp")
     
-    set(SRC ${CMAKE_CURRENT_BINARY_DIR}/config.hpp
+    set(SRC basic_database.hpp
+            ${CMAKE_CURRENT_BINARY_DIR}/config.hpp
             database.hpp
             database.cpp
             error.cpp

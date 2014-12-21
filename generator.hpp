@@ -14,6 +14,8 @@ namespace foonathan { namespace string_id
 {
     namespace detail
     {
+        bool handle_generation_error(std::size_t counter, const char *name, const string_id &result);
+        
         template <typename Generator>
         string_id try_generate(const char *name, Generator generator, const string_id &prefix)
         {
@@ -21,7 +23,7 @@ namespace foonathan { namespace string_id
             auto result = string_id(prefix, generator(), status);
             for (std::size_t counter = 1;
                  status != basic_database::new_string &&
-                 get_generation_error_handler()(counter, name, result.hash_code(), result.string());
+                 handle_generation_error(counter, name, result);
                  ++counter)
                 result = string_id(prefix, generator(), status);
             return result;
@@ -37,10 +39,10 @@ namespace foonathan { namespace string_id
         using state = unsigned long long;
         
         /// \brief Creates a new generator with given prefix.
-        /// \detail \c counter is the start value for the counter,
-        /// \c length the length of the number appended. If it is \c 0,
+        /// \arg counter is the start value for the counter.
+        /// \arg length is the length of the number appended.If it is \c 0,
         /// there are no restrictions. Else it will either prepend zeros to the number
-        /// or cut the number to \c length digits.
+        /// or cut the number to \c length digits. 
         /// \note For implementation reasons, \c length can't be higher than a certain value.
         /// If it is, it behaves as if \c length has this certain value.
         explicit counter_generator(const string_id &prefix,
@@ -108,8 +110,7 @@ namespace foonathan { namespace string_id
         {
             std::uniform_int_distribution<std::size_t>
                 dist(0, table_.no_characters - 1);
-            char random[Length + 1];
-            random[Length] = 0;
+            char random[Length];
             return detail::try_generate("foonathan::string_id::random_generator",
                     [&]()
                     {
