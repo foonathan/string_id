@@ -5,17 +5,18 @@
 #ifndef FOONATHAN_STRING_ID_ERROR_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_ERROR_HPP_INCLUDED
 
-#include <stdexcept>
+#include <exception>
+#include <string>
 
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
 {
     /// \brief The base class for all custom exception classes of this library.
-    class error : public std::logic_error
+    class error : public std::exception
     {
     protected:
-        using logic_error::logic_error;
+        error() noexcept = default;
     };
     
     /// \brief The type of the collision handler.
@@ -36,11 +37,14 @@ namespace foonathan { namespace string_id
     public:
         //=== constructor/destructor ===//
         /// \brief Creates a new exception, same parameter as \ref collision_handler.
-        collision_error(hash_type hash, const char *a, const char *b);
+        collision_error(hash_type hash, const char *a, const char *b)
+        : a_(a), b_(b), hash_(hash) {}
         
         ~collision_error() noexcept override = default;
         
         //=== accessors ===//
+        const char* what() const noexcept override;
+        
         /// @{
         /// \brief Returns one of the two strings that colllided.
         const char* first_string() const noexcept
@@ -86,11 +90,14 @@ namespace foonathan { namespace string_id
     public:
         //=== constructor/destructor ===//
         /// \brief Creates it by giving it the name of the generator.
-        generation_error(const char *generator_name);
+        generation_error(const char *generator_name)
+        : name_(generator_name) {}
         
         ~generation_error() noexcept override = default;
         
         //=== accessors ===//
+        const char* what() const noexcept override;
+        
         /// \brief Returns the name of the generator.
         const char* generator_name() const noexcept
         {

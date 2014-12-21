@@ -29,21 +29,18 @@ sid::collision_handler sid::get_collision_handler()
     return collision_h;
 }
 
-namespace
+const char* sid::collision_error::what() const noexcept try
 {
-    std::string format_collision(sid::hash_type hash, const char *a, const char *b)
-    {
-        std::ostringstream str;
-        str << "foonathan::string_id::collision_error: strings "
-            << '"' << a << '"' << " and " << '"' << b << '"'
-            << " are both producing the value " << hash << '.';
-        return str.str();
-    }
+    std::ostringstream str;
+    str << "foonathan::string_id::collision_error: strings "
+        << '"' << a_ << '"' << " and " << '"' << b_ << '"'
+        << " are both producing the value " << hash_ << '.';
+    return str.str().c_str();
 }
-
-sid::collision_error::collision_error(hash_type hash, const char *a, const char *b)
-: error(format_collision(hash, a, b)), a_(a), b_(b), hash_(hash)
-{}
+catch (...)
+{
+    return "foonathan::string_id::collision_error: two different strings are producing the same value";
+}
 
 namespace
 {
@@ -70,15 +67,12 @@ sid::generation_error_handler sid::get_generation_error_handler()
     return generation_error_h;
 }
 
-namespace
+const char* sid::generation_error::what() const noexcept try
 {
-    std::string format_generation(std::string name)
-    {
-        return "foonathan::string_id::generation_error: Generator \"" + name +
-               "\" was unable to generate new string id.";
-    }
+    return ("foonathan::string_id::generation_error: Generator \"" + name_ +
+            "\" was unable to generate new string id.").c_str();
 }
-
-sid::generation_error::generation_error(const char *name)
-: error(format_generation(name)), name_(name)
-{}
+catch (...)
+{
+    return "foonathan::string_id::generation_error: unable to generate new string id.";
+}
