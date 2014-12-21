@@ -41,5 +41,5 @@ include(cxxver.cmake)
 
 foreach(target ${targets})
     target_compile_options(${target} PUBLIC ${CXX11_FLAG})
-    target_include_directories(${target} PUBLIC ${CMAKE_BINARY_DIR})
+    target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
