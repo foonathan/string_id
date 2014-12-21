@@ -22,10 +22,12 @@ The database can be any user-defined type derived from a certain interface class
 
 * *FOONATHAN_STRING_ID_MULTITHREADED* - if *ON*, database access will be synchronized via a mutex, e.g. the thread safe adapter will be used. It has no effect if database is disabled. Default value is *ON*.
 
+There are special generator classes. They have a similar interface to the random number generators in the standard libraries, but generate string identifiers. This is used to generate a bunch of identifiers in an automated fashion. The generators also take care that there are always new identifiers generated. This can be controlled via a handler similar to the collision handling, too.
+
 See example/main.cpp for an example.
 
 Hashing and Databases
 ---------------------
 It currently uses a FNV-1a 64bit hash. Collisions are really rare, I have tested 219,606 English words (in lowercase) mixed with a bunch of numbers and didn't encounter a single collision. Since this is the normal use case for identifiers, the hash function is pretty good. In addition, there is a good distribution of the hashed values and it is easy to calculate.
 
-The database uses a specialized hash table. Collisions of the bucket index are resolved via seperate chaining with single linked list. Each node contains the string directly without additional memory allocation. The nodes on the linked list are sorted using the hash value. This allows efficient retrieving and checking whether there is already a string with the same hash value stored. This makes it very efficient and faster than the std::unordered_map that was used before (at least faster than libstdc++ implementation I have used for the benchmarks...).
+The database uses a specialized hash table. Collisions of the bucket index are resolved via seperate chaining with single linked list. Each node contains the string directly without additional memory allocation. The nodes on the linked list are sorted using the hash value. This allows efficient retrieving and checking whether there is already a string with the same hash value stored. This makes it very efficient and faster than the std::unordered_map that was used before (at least faster than libstdc++ implementation I have used for the benchmarks).
