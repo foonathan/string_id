@@ -108,8 +108,7 @@ namespace foonathan { namespace string_id
         {
             std::uniform_int_distribution<std::size_t>
                 dist(0, table_.no_characters - 1);
-            char random[Length + 1];
-            random[Length] = 0;
+            char random[Length];
             return detail::try_generate("foonathan::string_id::random_generator",
                     [&]()
                     {

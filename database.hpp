@@ -39,15 +39,30 @@ namespace foonathan { namespace string_id
         };
         
         /// \brief Should insert a new hash-string-pair with prefix (optional) into the internal database.
-        /// \detail The string must be copied prior to stroing, it may not stay valid.<br>
-        /// The prefix pointer may be \c nullptr, if it is not, it should be prepended to the string,
-        /// length is the length of prefix + str. All strings are null-terminated.
-        virtual insert_status insert(hash_type hash, const char *prefix, const char* str, std::size_t length) = 0;
+        /// \detail The string must be copied prior to storing, it may not stay valid.
+        /// \arg hash is the hash of the string.
+        /// \arg str is the string which does not need to be null-terminated.
+        /// \arg length is the length of the string.
+        /// \return The \ref insert_status.
+        virtual insert_status insert(hash_type hash, const char* str, std::size_t length) = 0;
+        
+        /// \brief Inserts a hash-string-pair with given prefix into the internal database.
+        /// \detail The default implementation performs a lookup of the prefix string and appends it,
+        /// then it calls \ref insert.<br>
+        /// Override it if you can do it more efficiently.
+        /// \arg hash is the hash of the string plus prefix.
+        /// \arg prefix is the hash of the prefix-string.
+        /// \arg str is the suffix which does not need to be null-terminated.
+        /// \arg length is the length of the suffix.
+        /// \return The \ref insert_status.
+        virtual insert_status insert_prefix(hash_type hash, hash_type prefix,
+                                            const char *str, std::size_t length);
         
         /// \brief Should return the string stored with a given hash.
-        /// \detail The return value should stay valid as long as the database exists.<br>
-        /// It is guaranteed that the hash value has been inserted before.<br>
-        /// If there is no way to retrieve a string it should return an error message.
+        /// \detail It is guaranteed that the hash value has been inserted before.
+        /// \return A null-terminated string belonging to the hash code or
+        /// an error message if the database does not store anything.<br>
+        /// The return value must stay valid as long as the database exists.
         virtual const char* lookup(hash_type hash) const noexcept = 0;
         
     protected:
@@ -61,7 +76,12 @@ namespace foonathan { namespace string_id
     class dummy_database : public basic_database
     {
     public:        
-        insert_status insert(hash_type, const char*, const char *, std::size_t) override
+        insert_status insert(hash_type, const char *, std::size_t) override
+        {
+            return new_string;
+        }
+        
+        insert_status insert_prefix(hash_type, hash_type, const char *, std::size_t) override
         {
             return new_string;
         }
@@ -80,10 +100,14 @@ namespace foonathan { namespace string_id
         map_database(std::size_t size = 1024, double max_load_factor = 1.0);
         ~map_database() noexcept;
         
-        insert_status insert(hash_type hash, const char *prefix, const char *str, std::size_t length) override;
+        insert_status insert(hash_type hash, const char *str, std::size_t length) override;
+        insert_status insert_prefix(hash_type hash, hash_type prefix,
+                                    const char *str, std::size_t length) override;
         const char* lookup(hash_type hash) const noexcept override;
         
     private:        
+        void rehash();
+        
         class node_list;
         std::unique_ptr<node_list[]> buckets_;
         std::size_t no_items_, no_buckets_;
@@ -102,11 +126,18 @@ namespace foonathan { namespace string_id
         
         using Database::Database;
         
-        typename Database::insert_status insert(hash_type hash, const char *prefix,
-                                       const char *str, std::size_t length) override
+        auto insert(hash_type hash, const char *str, std::size_t length) 
+        -> typename Database::insert_status override
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return Database::insert(hash, prefix, str, length);
+            return Database::insert(hash, str, length);
+        }
+        
+        auto insert_prefix(hash_type hash, hash_type prefix, const char *str, std::size_t length) 
+        -> typename Database::insert_status override
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return Database::insert_prefix(hash, prefix, str, length);
         }
         
         const char* lookup(hash_type hash) const noexcept override

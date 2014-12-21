@@ -5,7 +5,6 @@
 #ifndef FOONATHAN_STRING_ID_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_HPP_INCLUDED
 
-#include <cassert>
 #include <cstring>
 #include <functional>
 
@@ -29,13 +28,10 @@ namespace foonathan { namespace string_id
         string_info(const char *str) noexcept
         : string(str), length(std::strlen(str)) {}
         
-        /// \brief Creates it from a null-terminated string whose length is known.
-        /// \detail The null-byte must be at index \c length!
+        /// \brief Creates it from a string with given length.
+        /// \arg str must not be null-terminated.
         string_info(const char *str, std::size_t length)
-        : string(str), length(length)
-        {
-            assert(string[length] == 0 && "wrong length of string or not null-terminated");
-        }
+        : string(str), length(length) {}
     };
     
     /// \brief The string identifier class.

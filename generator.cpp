@@ -15,7 +15,6 @@ namespace
     sid::string_info to_string(sid::counter_generator::state s, char *begin, char *end,
                                std::size_t length)
     {
-        *--end = 0;
         auto cur = end;
         std::size_t i = 0;
         

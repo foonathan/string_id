@@ -28,7 +28,7 @@ sid::string_id::string_id(string_info str, basic_database &db,
                           basic_database::insert_status &status)
 : id_(detail::sid_hash(str.string)), db_(&db)
 {
-    status = db_->insert(id_, nullptr, str.string, str.length);
+    status = db_->insert(id_, str.string, str.length);
 }
 
 sid::string_id::string_id(const string_id &prefix, string_info str)
@@ -43,8 +43,7 @@ sid::string_id::string_id(const string_id &prefix, string_info str,
                           basic_database::insert_status &status)
 : id_(detail::sid_hash(str.string, prefix.hash_code())), db_(prefix.db_)
 {
-    auto prefix_str = db_->lookup(prefix.hash_code());
-    status = db_->insert(id_, prefix_str, str.string, str.length + std::strlen(prefix_str));
+    status = db_->insert_prefix(id_, prefix.hash_code(), str.string, str.length);
 }
 
 const char* sid::string_id::string() const noexcept
