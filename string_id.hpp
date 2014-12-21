@@ -27,7 +27,7 @@ namespace foonathan { namespace string_id
         : string(str), length(std::strlen(str)) {}
         
         /// \brief Creates it from a string with given length.
-        /// \arg str must not be null-terminated.
+        /// \arg \c str does not need to be null-terminated.
         string_info(const char *str, std::size_t length)
         : string(str), length(length) {}
     };

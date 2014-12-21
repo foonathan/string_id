@@ -35,9 +35,9 @@ namespace foonathan { namespace string_id
         
         /// \brief Should insert a new hash-string-pair with prefix (optional) into the internal database.
         /// \detail The string must be copied prior to storing, it may not stay valid.
-        /// \arg hash is the hash of the string.
-        /// \arg str is the string which does not need to be null-terminated.
-        /// \arg length is the length of the string.
+        /// \arg \c hash is the hash of the string.
+        /// \arg \c str is the string which does not need to be null-terminated.
+        /// \arg \c length is the length of the string.
         /// \return The \ref insert_status.
         virtual insert_status insert(hash_type hash, const char* str, std::size_t length) = 0;
         
@@ -45,10 +45,10 @@ namespace foonathan { namespace string_id
         /// \detail The default implementation performs a lookup of the prefix string and appends it,
         /// then it calls \ref insert.<br>
         /// Override it if you can do it more efficiently.
-        /// \arg hash is the hash of the string plus prefix.
-        /// \arg prefix is the hash of the prefix-string.
-        /// \arg str is the suffix which does not need to be null-terminated.
-        /// \arg length is the length of the suffix.
+        /// \arg \c hash is the hash of the string plus prefix.
+        /// \arg \c prefix is the hash of the prefix-string.
+        /// \arg \c str is the suffix which does not need to be null-terminated.
+        /// \arg \c length is the length of the suffix.
         /// \return The \ref insert_status.
         virtual insert_status insert_prefix(hash_type hash, hash_type prefix,
                                             const char *str, std::size_t length);

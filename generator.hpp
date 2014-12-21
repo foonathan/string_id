@@ -39,8 +39,8 @@ namespace foonathan { namespace string_id
         using state = unsigned long long;
         
         /// \brief Creates a new generator with given prefix.
-        /// \arg counter is the start value for the counter.
-        /// \arg length is the length of the number appended.If it is \c 0,
+        /// \arg \c counter is the start value for the counter.
+        /// \arg \c length is the length of the number appended.If it is \c 0,
         /// there are no restrictions. Else it will either prepend zeros to the number
         /// or cut the number to \c length digits. 
         /// \note For implementation reasons, \c length can't be higher than a certain value.

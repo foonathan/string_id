@@ -33,6 +33,7 @@ namespace
     }
 }
 
+/// \cond impl
 class sid::map_database::node_list
 {    
     struct node
@@ -183,6 +184,7 @@ private:
     
     node *head_;
 };
+/// \endcond
 
 sid::map_database::map_database(std::size_t size, double max_load_factor)
 : buckets_(new node_list[size]),
