@@ -8,10 +8,8 @@
 #include <cstring>
 #include <functional>
 
+#include "basic_database.hpp"
 #include "hash.hpp"
-#include "config.hpp"
-#include "database.hpp"
-#include "error.hpp"
 
 namespace foonathan { namespace string_id
 {

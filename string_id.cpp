@@ -4,6 +4,8 @@
 
 #include "string_id.hpp"
 
+#include "error.hpp"
+
 namespace sid = foonathan::string_id;
 
 namespace

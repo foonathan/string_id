@@ -8,7 +8,14 @@
 #include <cstring>
 #include <utility>
 
+#include "error.hpp"
+
 namespace sid = foonathan::string_id;
+
+bool sid::detail::handle_generation_error(std::size_t counter, const char *name, const string_id &result)
+{
+    return get_generation_error_handler()(counter, name, result.hash_code(), result.string());
+}
 
 namespace
 {    
