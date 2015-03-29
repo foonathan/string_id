@@ -29,7 +29,7 @@ sid::collision_handler sid::get_collision_handler()
     return collision_h;
 }
 
-const char* sid::collision_error::what() const noexcept try
+const char* sid::collision_error::what() const FOONATHAN_NOEXCEPT try
 {
     std::ostringstream str;
     str << "foonathan::string_id::collision_error: strings "
@@ -44,7 +44,7 @@ catch (...)
 
 namespace
 {
-    constexpr auto no_tries_generation = 8u;
+    FOONATHAN_CONSTEXPR auto no_tries_generation = 8u;
     
     bool default_generation_error_handler(std::size_t no, const char *generator_name,
                                           sid::hash_type, const char *)
@@ -67,7 +67,7 @@ sid::generation_error_handler sid::get_generation_error_handler()
     return generation_error_h;
 }
 
-const char* sid::generation_error::what() const noexcept try
+const char* sid::generation_error::what() const FOONATHAN_NOEXCEPT try
 {
     return ("foonathan::string_id::generation_error: Generator \"" + name_ +
             "\" was unable to generate new string id.").c_str();

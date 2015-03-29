@@ -45,7 +45,7 @@ namespace
 sid::string_id sid::counter_generator::operator()()
 {
     // 4 times sizeof(state) is enough for the integer representation
-    static constexpr auto max_size = 4 * sizeof(state);
+    static FOONATHAN_CONSTEXPR auto max_size = 4 * sizeof(state);
     char string[max_size];
     return detail::try_generate("foonathan::string_id::counter_generator",
                                 [&]()
@@ -54,23 +54,23 @@ sid::string_id sid::counter_generator::operator()()
                                 }, prefix_);
 }
 
-void sid::counter_generator::discard(unsigned long long n) noexcept
+void sid::counter_generator::discard(unsigned long long n) FOONATHAN_NOEXCEPT
 {
     counter_ += n;
 }
 
 namespace
 {
-    static constexpr char table[]
+    static FOONATHAN_CONSTEXPR char table[]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxzy0123456789";
 }
 
-sid::character_table sid::character_table::alnum() noexcept
+sid::character_table sid::character_table::alnum() FOONATHAN_NOEXCEPT
 {
     return {table, sizeof(table) - 1};
 }
 
-sid::character_table sid::character_table::alpha() noexcept
+sid::character_table sid::character_table::alpha() FOONATHAN_NOEXCEPT
 {
     return {table, sizeof(table) - 1 - 10};
 }

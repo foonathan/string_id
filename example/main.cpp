@@ -38,9 +38,14 @@ int main() try
     // Output: false
     
     // compare id with constant
+#if FOONATHAN_STRING_ID_HAS_LITERAL
     std::cout << (a == "Hello"_id) << '\n';
+#else
+    std::cout << (a == id("Hello")) << '\n';
+#endif
     // Output: true
     
+#if FOONATHAN_STRING_ID_HAS_LITERAL
     // literal is compile-time
     switch (b.hash_code())
     {
@@ -54,6 +59,7 @@ int main() try
         std::cout << "World\n";
         break;
     }
+#endif
     
     //=== generation ===//
     // the prefix for all generated ids

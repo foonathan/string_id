@@ -8,6 +8,7 @@
 #include <atomic>
 #include <random>
 
+#include "config.hpp"
 #include "string_id.hpp"
 
 namespace foonathan { namespace string_id
@@ -54,7 +55,7 @@ namespace foonathan { namespace string_id
         string_id operator()();
         
         /// \brief Discards a number of states by advancing the counter.
-        void discard(unsigned long long n) noexcept;
+        void discard(unsigned long long n) FOONATHAN_NOEXCEPT;
         
     private:
         string_id prefix_;
@@ -71,14 +72,14 @@ namespace foonathan { namespace string_id
         std::size_t no_characters;
         
         /// \brief Creates a new table.
-        constexpr character_table(const char* chars, std::size_t no) noexcept
+        character_table(const char* chars, std::size_t no) FOONATHAN_NOEXCEPT
         : characters(chars), no_characters(no) {}
         
         /// \brief A table with all English letters (both cases) and digits.
-        static character_table alnum() noexcept;
+        static character_table alnum() FOONATHAN_NOEXCEPT;
         
         /// \brief A table with all English letters (both cases).
-        static character_table alpha() noexcept;
+        static character_table alpha() FOONATHAN_NOEXCEPT;
     };
     
     /// \brief A generator that generates string ids by appendending random characters to a prefix.
@@ -91,7 +92,7 @@ namespace foonathan { namespace string_id
         using state = RandomNumberGenerator;
         
         /// \brief The number of characters appended.
-        static constexpr std::size_t length() noexcept
+        static FOONATHAN_CONSTEXPR_FNC std::size_t length() FOONATHAN_NOEXCEPT
         {
             return Length;
         }
