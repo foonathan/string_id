@@ -150,7 +150,7 @@ namespace std
  
         result_type operator()(const argument_type &arg) const FOONATHAN_NOEXCEPT
         {
-            return arg.hash_code();
+            return static_cast<result_type>(arg.hash_code());
         }
     };
 } // namspace std

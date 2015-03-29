@@ -33,7 +33,7 @@
     #if FOONATHAN_IMPL_HAS_NOEXCEPT
         #define FOONATHAN_NOEXCEPT noexcept
     #else
-        #define FOONATHAN_NOEXCEPT throw()
+        #define FOONATHAN_NOEXCEPT
     #endif
 #endif
 

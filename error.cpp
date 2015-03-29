@@ -11,7 +11,7 @@ namespace sid = foonathan::string_id;
 
 namespace
 {    
-    [[noreturn]] void default_collision_handler(sid::hash_type hash, const char *a, const char *b)
+    void default_collision_handler(sid::hash_type hash, const char *a, const char *b)
     {
         throw sid::collision_error(hash, a, b);
     }
