@@ -6,13 +6,13 @@
 #define FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
 
 /// \brief Major version.
-#define FOONATHAN_STRING_ID_VERSION_MAJOR ${VERSION_MAJOR}
+#define FOONATHAN_STRING_ID_VERSION_MAJOR ${version_major}
 
 /// \brief Minor version.
-#define FOONATHAN_STRING_ID_VERSION_MINOR ${VERSION_MINOR}
+#define FOONATHAN_STRING_ID_VERSION_MINOR ${version_minor}
 
 /// \brief Total version number.
-#define FOONATHAN_STRING_ID_VERSION ${VERSION_MAJOR} * 100 + ${VERSION_MINOR}
+#define FOONATHAN_STRING_ID_VERSION (${version_major} * 100 + ${version_minor})
 
 /// \brief Whether or not the database for string ids is active.
 /// \detail This is \c true by default, change it via CMake option \c FOONATHAN_STRING_ID_DATABASE.
