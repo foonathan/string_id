@@ -1,6 +1,5 @@
 if (BIICODE)
     include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
-    INIT_BIICODE_BLOCK()
 else()
     cmake_minimum_required(VERSION 2.8)
     project(foonathan_string_id)
@@ -12,17 +11,15 @@ option(FOONATHAN_STRING_ID_MULTITHREADED "enable or disable a thread safe databa
 set(VERSION_MAJOR 2)
 set(VERSION_MINOR 0)
 
-if (BIICODE)
-    BII_CONFIGURE_FILE(config.hpp.in config.hpp)
-    
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
+	           "${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp")
+
+if (BIICODE)    
     ADD_BIICODE_TARGETS()    
     set(targets ${BII_BLOCK_TARGETS})
-else()    
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
-	               "${CMAKE_CURRENT_BINARY_DIR}/config.hpp")
-    
+else()        
     set(SRC basic_database.hpp
-            ${CMAKE_CURRENT_BINARY_DIR}/config.hpp
+            ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp
             database.hpp
             database.cpp
             error.cpp
@@ -42,4 +39,5 @@ include(cxxver.cmake)
 foreach(target ${targets})
     target_compile_options(${target} PUBLIC ${CXX11_FLAG})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id)
 endforeach()
