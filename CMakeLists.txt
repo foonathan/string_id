@@ -1,7 +1,8 @@
 if (BIICODE)
     include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
+    include(biicode/cmake/tools)
 else()
-    cmake_minimum_required(VERSION 2.8)
+    cmake_minimum_required(VERSION 3.0)
     project(foonathan_string_id)
 endif()
 
@@ -29,15 +30,20 @@ else()
             hash.hpp
             string_id.cpp
             string_id.hpp)
+
     add_library(foonathan_string_id ${SRC})
     add_executable(foonathan_string_id_example ${SRC} example/main.cpp)
+
     set(targets foonathan_string_id foonathan_string_id_example)
+    
+    set_target_properties(${targets} PROPERTIES CXX_STANDARD 11)
+    set_target_properties(${targets} PROPERTIES CXX_STANDARD_REQUIRED ON)
 endif()
 
-include(cxxver.cmake)
-
 foreach(target ${targets})
-    target_compile_options(${target} PUBLIC ${CXX11_FLAG})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id)
+    if (BIICODE)
+        ACTIVATE_CPP11(${target})
+    endif()
 endforeach()
