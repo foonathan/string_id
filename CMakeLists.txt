@@ -23,14 +23,14 @@ set(version_major 2 CACHE INTERNAL "")
 set(version_minor 0 CACHE INTERNAL "")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
-	           "${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp")
+	           "${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp")
 
 if (BIICODE)    
     ADD_BIICODE_TARGETS()    
     set(targets ${BII_BLOCK_TARGETS} CACHE INTERNAL "")
 else()        
     set(src basic_database.hpp
-            ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp
+            config.hpp
             database.hpp
             database.cpp
             error.cpp
@@ -53,7 +53,6 @@ endif()
 
 foreach(target ${targets})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-    target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id)
     if (BIICODE)
         ACTIVATE_CPP11(${target})
     endif()

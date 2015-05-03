@@ -1,9 +1,6 @@
-// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// Copyright (C) 2014-2015 Jonathan Müller <jonathanmueller.dev@gmail.com>
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
-
-#ifndef FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
-#define FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
 
 //=== version ===//
 /// \brief Major version.
@@ -56,5 +53,3 @@
 /// \brief Whether or not the \c constexpr literal operators are availble.
 /// \detail If this is \c false, there is only the \ref id() function which can't be used inside switch cases.
 #define FOONATHAN_STRING_ID_HAS_LITERAL (FOONATHAN_IMPL_HAS_LITERAL && FOONATHAN_IMPL_HAS_CONSTEXPR)
-
-#endif // FOONATHAN_STRING_ID_CONFIG_HPP_INCLUDED
