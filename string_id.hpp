@@ -143,7 +143,7 @@ namespace std
 {
     /// \brief \c std::hash support for \ref string_id.
     template <>
-    class hash<foonathan::string_id::string_id>
+    struct hash<foonathan::string_id::string_id>
     {
         typedef foonathan::string_id::string_id argument_type;
         typedef size_t result_type;        

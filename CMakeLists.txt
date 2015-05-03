@@ -7,7 +7,17 @@ else()
 endif()
 
 include(CheckCXXSourceCompiles)
-set(CMAKE_REQUIRED_FLAGS "-std=c++11" CACHE INTERNAL "")
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG(-std=c++11 cpp11_flag)
+if (cpp11_flag)
+    set(CMAKE_REQUIRED_FLAGS "-std=c++11")
+else()
+    CHECK_CXX_COMPILER_FLAG(-std=c++0x cpp0x_flag)
+    if (cpp0x_flag)
+        set(CMAKE_REQUIRED_FLAGS "-std=c++0x")
+    endif(cpp0x_flag)
+endif(cpp11_flag)
+
 CHECK_CXX_SOURCE_COMPILES("constexpr auto foo = 1; int main(){}" comp_constexpr)
 CHECK_CXX_SOURCE_COMPILES("void foo() noexcept {} int main(){}" comp_noexcept)
 CHECK_CXX_SOURCE_COMPILES("#include <cstddef>
