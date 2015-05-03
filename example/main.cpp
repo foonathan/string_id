@@ -68,7 +68,7 @@ int main() try
     {
         // a generator type appending 8 random characters to the prefix
         // it uses the std::mt19937 generator for the actual generation
-        using generator_t = sid::random_generator<std::mt19937, 8>;
+        typedef sid::random_generator<std::mt19937, 8> generator_t;
         // create a generator, seed the random number generator with the current time
         generator_t generator(prefix, std::mt19937(std::int_fast32_t(std::time(nullptr))));
         
@@ -92,7 +92,7 @@ int main() try
     try
     {
         // a generator appending an increasing number to the prefix
-        using generator_t = sid::counter_generator;
+        typedef sid::counter_generator generator_t;
         
         // create a generator starting with 0, each number will be 4 digits long
         generator_t generator(prefix, 0, 4);

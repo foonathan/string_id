@@ -145,8 +145,8 @@ namespace std
     template <>
     class hash<foonathan::string_id::string_id>
     {
-        using argument_type = foonathan::string_id::string_id;
-        using result_type = size_t;        
+        typedef foonathan::string_id::string_id argument_type;
+        typedef size_t result_type;        
  
         result_type operator()(const argument_type &arg) const FOONATHAN_NOEXCEPT
         {

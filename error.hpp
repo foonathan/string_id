@@ -23,7 +23,7 @@ namespace foonathan { namespace string_id
     /// \brief The type of the collision handler.
     /// \detail It will be called when a string hashing results in a collision giving it the two strings collided.
     /// The default handler throws an exception of type \ref collision_error.
-    using collision_handler = void(*)(hash_type hash, const char *a, const char *b);
+    typedef void(*collision_handler)(hash_type hash, const char *a, const char *b);
     
     /// \brief Exchanges the \ref collision_handler.
     /// \detail This function is thread safe.
@@ -75,7 +75,7 @@ namespace foonathan { namespace string_id
     /// The generator will try again until the handler returns \c false in which case it just returns the old \c string_id.
     /// It passes the number of tries, the name of the generator and the hash and string of the generated \c string_id.<br>
     /// The default handler allows 8 tries and then throws an exception of type \ref generation_error.
-    using generation_error_handler = bool(*)(std::size_t no, const char *generator_name,
+    typedef bool(*generation_error_handler)(std::size_t no, const char *generator_name,
                                              hash_type hash, const char *str);
     
     /// \brief Exchanges the \ref generation_error_handler.

@@ -65,7 +65,7 @@ namespace foonathan { namespace string_id
     {
     public:
         /// \brief The base database.
-        using base_database = Database;
+        typedef Database base_database;
         
         // workaround of lacking inheriting constructors
 		template <typename ... Args>
@@ -100,11 +100,11 @@ namespace foonathan { namespace string_id
     /// \detail Its exact type is one of the previous listed databases.
     /// You can control its selection via the macros listed in config.hpp.in.
 #if FOONATHAN_STRING_ID_DATABASE && FOONATHAN_STRING_ID_MULTITHREADED
-    using default_database = thread_safe_database<map_database>;
+    typedef thread_safe_database<map_database> default_database;
 #elif FOONATHAN_STRING_ID_DATABASE
-    using default_database = map_database;
+    typedef map_database default_database;
 #else
-    using default_database = dummy_database;
+    typedef dummy_database default_database;
 #endif
 }} // namespace foonathan::string_id
 
