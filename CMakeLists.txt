@@ -43,12 +43,12 @@ else()
         CACHE INTERNAL "")
 
     add_library(foonathan_string_id ${src})
-    add_executable(foonathan_string_id_example ${src} example/main.cpp)
+    add_executable(foonathan_string_id_example example/main.cpp)
+    target_link_libraries(foonathan_string_id_example PUBLIC foonathan_string_id)
 
     set(targets foonathan_string_id foonathan_string_id_example CACHE INTERNAL "")
     
     set_target_properties(${targets} PROPERTIES CXX_STANDARD 11)
-    set_target_properties(${targets} PROPERTIES CXX_STANDARD_REQUIRED ON)
 endif()
 
 foreach(target ${targets})
