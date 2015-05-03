@@ -41,10 +41,10 @@ namespace foonathan { namespace string_id
         collision_error(hash_type hash, const char *a, const char *b)
         : a_(a), b_(b), hash_(hash) {}
         
-        ~collision_error() FOONATHAN_NOEXCEPT override = default;
+        ~collision_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE = default;
         
         //=== accessors ===//
-        const char* what() const FOONATHAN_NOEXCEPT override;
+        const char* what() const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE;
         
         /// @{
         /// \brief Returns one of the two strings that colllided.
@@ -94,10 +94,10 @@ namespace foonathan { namespace string_id
         generation_error(const char *generator_name)
         : name_(generator_name) {}
         
-        ~generation_error() FOONATHAN_NOEXCEPT override = default;
+        ~generation_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE = default;
         
         //=== accessors ===//
-        const char* what() const FOONATHAN_NOEXCEPT override;
+        const char* what() const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE;
         
         /// \brief Returns the name of the generator.
         const char* generator_name() const FOONATHAN_NOEXCEPT

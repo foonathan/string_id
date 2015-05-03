@@ -25,6 +25,7 @@
 #cmakedefine01 FOONATHAN_IMPL_HAS_NOEXCEPT
 #cmakedefine01 FOONATHAN_IMPL_HAS_CONSTEXPR
 #cmakedefine01 FOONATHAN_IMPL_HAS_LITERAL
+#cmakedefine01 FOONATHAN_IMPL_HAS_OVERRIDE
 
 #ifndef FOONATHAN_NOEXCEPT
     #if FOONATHAN_IMPL_HAS_NOEXCEPT
@@ -47,6 +48,14 @@
         #define FOONATHAN_CONSTEXPR_FNC constexpr
     #else
         #define FOONATHAN_CONSTEXPR_FNC inline
+    #endif
+#endif
+
+#ifndef FOONATHAN_OVERRIDE
+    #if FOONATHAN_IMPL_HAS_OVERRIDE
+        #define FOONATHAN_OVERRIDE override
+    #else
+        #define FOONATHAN_OVERRIDE
     #endif
 #endif
 

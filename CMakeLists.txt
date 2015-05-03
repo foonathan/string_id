@@ -12,12 +12,16 @@ CHECK_CXX_SOURCE_COMPILES("constexpr auto foo = 1; int main(){}" comp_constexpr)
 CHECK_CXX_SOURCE_COMPILES("void foo() noexcept {} int main(){}" comp_noexcept)
 CHECK_CXX_SOURCE_COMPILES("#include <cstddef>
                            int operator\"\"_foo(const char *, std::size_t){return 0;} int main(){}" comp_literal)
+CHECK_CXX_SOURCE_COMPILES("struct base {virtual void foo() {}};
+                           struct derived : base {void foo() override {}};
+                           int main(){}" comp_override)
 
 option(FOONATHAN_STRING_ID_DATABASE "enable or disable database" ON)
 option(FOONATHAN_STRING_ID_MULTITHREADED "enable or disable a thread safe database" ON)
 option(FOONATHAN_IMPL_HAS_CONSTEXPR "whether or not constexpr is supported" ${comp_constexpr})
 option(FOONATHAN_IMPL_HAS_NOEXCEPT "whether or not noexcept is supported" ${comp_noexcept})
 option(FOONATHAN_IMPL_HAS_LITERAL "whether or not literal operator overloading is supported" ${comp_literal})
+option(FOONATHAN_IMPL_HAS_OVERRIDE "whether or not override is supported" ${comp_override})
 
 set(version_major 2 CACHE INTERNAL "")
 set(version_minor 0 CACHE INTERNAL "")

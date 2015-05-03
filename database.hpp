@@ -19,17 +19,17 @@ namespace foonathan { namespace string_id
     class dummy_database : public basic_database
     {
     public:        
-        insert_status insert(hash_type, const char *, std::size_t) override
+        insert_status insert(hash_type, const char *, std::size_t) FOONATHAN_OVERRIDE
         {
             return new_string;
         }
         
-        insert_status insert_prefix(hash_type, hash_type, const char *, std::size_t) override
+        insert_status insert_prefix(hash_type, hash_type, const char *, std::size_t) FOONATHAN_OVERRIDE
         {
             return new_string;
         }
         
-        const char* lookup(hash_type) const FOONATHAN_NOEXCEPT override
+        const char* lookup(hash_type) const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE
         {
             return "string_id database disabled";
         }
@@ -43,10 +43,10 @@ namespace foonathan { namespace string_id
         explicit map_database(std::size_t size = 1024, double max_load_factor = 1.0);
         ~map_database() FOONATHAN_NOEXCEPT;
         
-        insert_status insert(hash_type hash, const char *str, std::size_t length) override;
+        insert_status insert(hash_type hash, const char *str, std::size_t length) FOONATHAN_OVERRIDE;
         insert_status insert_prefix(hash_type hash, hash_type prefix,
-                                    const char *str, std::size_t length) override;
-        const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT override;
+                                    const char *str, std::size_t length) FOONATHAN_OVERRIDE;
+        const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE;
         
     private:        
         void rehash();
@@ -73,20 +73,20 @@ namespace foonathan { namespace string_id
 		: base_database(std::forward<Args>(args)...) {}
         
         auto insert(hash_type hash, const char *str, std::size_t length) 
-        -> typename Database::insert_status override
+        -> typename Database::insert_status FOONATHAN_OVERRIDE
         {
             std::lock_guard<std::mutex> lock(mutex_);
             return Database::insert(hash, str, length);
         }
         
         auto insert_prefix(hash_type hash, hash_type prefix, const char *str, std::size_t length) 
-        -> typename Database::insert_status override
+        -> typename Database::insert_status FOONATHAN_OVERRIDE
         {
             std::lock_guard<std::mutex> lock(mutex_);
             return Database::insert_prefix(hash, prefix, str, length);
         }
         
-        const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT override
+        const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE
         {
             std::lock_guard<std::mutex> lock(mutex_);
             return Database::lookup(hash);
