@@ -26,8 +26,10 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
 	           "${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp")
 
 if (BIICODE)    
-    ADD_BIICODE_TARGETS()    
+    ADD_BII_TARGETS()    
     set(targets ${BII_BLOCK_TARGETS} CACHE INTERNAL "")
+    
+    ACTIVATE_CPP11()
 else()        
     set(src basic_database.hpp
             config.hpp
@@ -53,7 +55,4 @@ endif()
 
 foreach(target ${targets})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-    if (BIICODE)
-        ACTIVATE_CPP11(${target})
-    endif()
 endforeach()
