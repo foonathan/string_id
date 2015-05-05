@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// Copyright (C) 2014-2015 Jonathan Müller <jonathanmueller.dev@gmail.com>
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
@@ -8,6 +8,7 @@
 #include <exception>
 #include <string>
 
+#include "config.hpp"
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
@@ -16,7 +17,7 @@ namespace foonathan { namespace string_id
     class error : public std::exception
     {
     protected:
-        error() noexcept = default;
+        error() FOONATHAN_NOEXCEPT = default;
     };
     
     /// \brief The type of the collision handler.
@@ -40,26 +41,26 @@ namespace foonathan { namespace string_id
         collision_error(hash_type hash, const char *a, const char *b)
         : a_(a), b_(b), hash_(hash) {}
         
-        ~collision_error() noexcept override = default;
+        ~collision_error() FOONATHAN_NOEXCEPT override = default;
         
         //=== accessors ===//
-        const char* what() const noexcept override;
+        const char* what() const FOONATHAN_NOEXCEPT override;
         
         /// @{
         /// \brief Returns one of the two strings that colllided.
-        const char* first_string() const noexcept
+        const char* first_string() const FOONATHAN_NOEXCEPT
         {
             return a_.c_str();
         }
         
-        const char* second_string() const noexcept
+        const char* second_string() const FOONATHAN_NOEXCEPT
         {
             return b_.c_str();
         }
         /// @}
         
         /// \brief Returns the hash code of the collided strings.
-        hash_type hash_code() const noexcept
+        hash_type hash_code() const FOONATHAN_NOEXCEPT
         {
             return hash_;
         }
@@ -93,13 +94,13 @@ namespace foonathan { namespace string_id
         generation_error(const char *generator_name)
         : name_(generator_name) {}
         
-        ~generation_error() noexcept override = default;
+        ~generation_error() FOONATHAN_NOEXCEPT override = default;
         
         //=== accessors ===//
-        const char* what() const noexcept override;
+        const char* what() const FOONATHAN_NOEXCEPT override;
         
         /// \brief Returns the name of the generator.
-        const char* generator_name() const noexcept
+        const char* generator_name() const FOONATHAN_NOEXCEPT
         {
             return name_.c_str();
         }

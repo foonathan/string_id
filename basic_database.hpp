@@ -1,10 +1,11 @@
-// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// Copyright (C) 2014-2015 Jonathan Müller <jonathanmueller.dev@gmail.com>
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
 #ifndef FOONATHAN_STRING_ID_BASIC_DATABASE_HPP_INCLUDED
 #define FOONATHAN_STRING_ID_BASIC_DATABASE_HPP_INCLUDED
 
+#include "config.hpp"
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
@@ -58,11 +59,11 @@ namespace foonathan { namespace string_id
         /// \return A null-terminated string belonging to the hash code or
         /// an error message if the database does not store anything.<br>
         /// The return value must stay valid as long as the database exists.
-        virtual const char* lookup(hash_type hash) const noexcept = 0;
+        virtual const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT = 0;
         
     protected:
-        basic_database() noexcept = default;
-        ~basic_database() noexcept = default;
+        basic_database() FOONATHAN_NOEXCEPT = default;
+        ~basic_database() FOONATHAN_NOEXCEPT = default;
     };
 }} // foonathan::string_id
 

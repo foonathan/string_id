@@ -1,3 +1,9 @@
+2.0-1
+-----
+* updated support for newer Biicode versions
+* improved CMakeLists.txt
+* compatibility mode to support MSVC
+
 2.0
 ---
 * added interface base class for databases

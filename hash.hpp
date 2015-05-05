@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// Copyright (C) 2014-2015 Jonathan Müller <jonathanmueller.dev@gmail.com>
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
@@ -6,6 +6,8 @@
 #define FOONATHAN_STRING_ID_HASH_HPP_INCLUDED
 
 #include <cstdint>
+
+#include "config.hpp"
 
 namespace foonathan { namespace string_id
 {
@@ -15,11 +17,11 @@ namespace foonathan { namespace string_id
     
     namespace detail
     {
-        constexpr hash_type fnv_basis = 14695981039346656037ull;
-        constexpr hash_type fnv_prime = 109951162821ull;
+        FOONATHAN_CONSTEXPR hash_type fnv_basis = 14695981039346656037ull;
+        FOONATHAN_CONSTEXPR hash_type fnv_prime = 109951162821ull;
         
         // FNV-1a 64 bit hash
-        constexpr hash_type sid_hash(const char *str, hash_type hash = fnv_basis) noexcept
+        FOONATHAN_CONSTEXPR_FNC hash_type sid_hash(const char *str, hash_type hash = fnv_basis)
         {
             return *str ? sid_hash(str + 1, (hash ^ *str) * fnv_prime) : hash;
         }

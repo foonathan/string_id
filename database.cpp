@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Jonathan Müller <jonathanmueller.dev@gmail.com>
+// Copyright (C) 2014-2015 Jonathan Müller <jonathanmueller.dev@gmail.com>
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
@@ -23,7 +23,7 @@ namespace
     // equivalent to prefix + str == other_str for std::string
     // prefix and other_str are null-terminated
     bool strequal(const char *prefix,
-                  const char *str, std::size_t length, const char *other_str) noexcept
+                  const char *str, std::size_t length, const char *other_str) FOONATHAN_NOEXCEPT
     {
         assert(prefix);
         while (*prefix)
@@ -43,7 +43,7 @@ class sid::map_database::node_list
         node *next;
         
         node(const char *str, std::size_t length,
-             hash_type h, node *next) noexcept
+             hash_type h, node *next) FOONATHAN_NOEXCEPT
         : length(length), hash(h), next(next)
         {
             void* mem = this;
@@ -54,7 +54,7 @@ class sid::map_database::node_list
         
         node(const char *prefix, std::size_t length_prefix,
              const char *str, std::size_t length_string,
-             hash_type h, node *next)
+             hash_type h, node *next) FOONATHAN_NOEXCEPT
         : length(length_prefix + length_string), hash(h), next(next)
         {
             void* mem = this;
@@ -65,7 +65,7 @@ class sid::map_database::node_list
             dest[length_string] = 0;
         }
         
-        const char* get_str() const noexcept
+        const char* get_str() const FOONATHAN_NOEXCEPT
         {
             const void *mem = this;
             return static_cast<const char*>(mem) + sizeof(node);
@@ -81,18 +81,18 @@ class sid::map_database::node_list
         
         node* cur;
         
-        insert_pos_t(node*& prev, node *next) noexcept
+        insert_pos_t(node*& prev, node *next) FOONATHAN_NOEXCEPT
         : exists(false), prev(prev), next(next), cur(nullptr) {}
         
-        insert_pos_t(node *cur) noexcept
+        insert_pos_t(node *cur) FOONATHAN_NOEXCEPT
         : exists(true), prev(this->cur), next(nullptr), cur(cur) {}
     };
     
 public:
-    node_list() noexcept
+    node_list() FOONATHAN_NOEXCEPT
     : head_(nullptr) {}
     
-    ~node_list() noexcept
+    ~node_list() FOONATHAN_NOEXCEPT
     {
         auto cur = head_;
         while (cur)
@@ -131,7 +131,7 @@ public:
     }
     
     // inserts all nodes into new buckets, this list is empty afterwards
-    void rehash(node_list *buckets, std::size_t size) noexcept
+    void rehash(node_list *buckets, std::size_t size) FOONATHAN_NOEXCEPT
     {
         auto cur = head_;
         while (cur)
@@ -147,13 +147,13 @@ public:
     }
     
     // returns element with hash, there must be one
-    const char* lookup(hash_type h) const noexcept
+    const char* lookup(hash_type h) const FOONATHAN_NOEXCEPT
     {
         return find_node(h)->get_str();
     }
     
 private:
-    node* find_node(hash_type h) const noexcept
+    node* find_node(hash_type h) const FOONATHAN_NOEXCEPT
     {
         assert(head_ && "hash not inserted");
         auto cur = head_;
@@ -166,7 +166,7 @@ private:
         return cur;
     }
     
-    insert_pos_t insert_pos(hash_type hash) noexcept
+    insert_pos_t insert_pos(hash_type hash) FOONATHAN_NOEXCEPT
     {
         node *cur = head_, *prev = nullptr;
         while (cur && cur->hash <= hash)
@@ -193,7 +193,7 @@ sid::map_database::map_database(std::size_t size, double max_load_factor)
   next_resize_(std::floor(no_buckets_ * max_load_factor_))
 {}
 
-sid::map_database::~map_database() noexcept {}
+sid::map_database::~map_database() FOONATHAN_NOEXCEPT {}
 
 sid::basic_database::insert_status sid::map_database::insert(hash_type hash, const char *str, std::size_t length)
 {
@@ -217,14 +217,14 @@ sid::basic_database::insert_status sid::map_database::insert_prefix(hash_type ha
     return status;
 }
 
-const char* sid::map_database::lookup(hash_type hash) const noexcept
+const char* sid::map_database::lookup(hash_type hash) const FOONATHAN_NOEXCEPT
 {
     return buckets_[hash % no_buckets_].lookup(hash);
 }
 
 void sid::map_database::rehash()
 {
-    static constexpr auto growth_factor = 2;
+    static FOONATHAN_CONSTEXPR auto growth_factor = 2;
     auto new_size = growth_factor * no_buckets_;
     auto buckets = new node_list[new_size]();
     auto end = buckets_.get() + no_buckets_;
