@@ -17,7 +17,7 @@ namespace foonathan { namespace string_id
     class error : public std::exception
     {
     protected:
-        error() FOONATHAN_NOEXCEPT = default;
+        error() = default;
     };
     
     /// \brief The type of the collision handler.
@@ -26,7 +26,7 @@ namespace foonathan { namespace string_id
     typedef void(*collision_handler)(hash_type hash, const char *a, const char *b);
     
     /// \brief Exchanges the \ref collision_handler.
-    /// \detail This function is thread safe.
+    /// \detail This function is thread safe if \ref FOONATHAN_STRING_ID_ATOMIC_HANDLER is \c true.
     collision_handler set_collision_handler(collision_handler h);
     
     /// \brief Returns the current \ref collision_handler.
@@ -41,7 +41,7 @@ namespace foonathan { namespace string_id
         collision_error(hash_type hash, const char *a, const char *b)
         : a_(a), b_(b), hash_(hash) {}
         
-        ~collision_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE = default;
+        ~collision_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE {}
         
         //=== accessors ===//
         const char* what() const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE;
@@ -79,7 +79,7 @@ namespace foonathan { namespace string_id
                                              hash_type hash, const char *str);
     
     /// \brief Exchanges the \ref generation_error_handler.
-    /// \detail This function is thread safe.
+    /// \detail This function is thread safe if \ref FOONATHAN_STRING_ID_ATOMIC_HANDLER is \c true.
     generation_error_handler set_generation_error_handler(generation_error_handler h);
     
     /// \brief Returns the current \ref generation_error_handler.
@@ -94,7 +94,7 @@ namespace foonathan { namespace string_id
         generation_error(const char *generator_name)
         : name_(generator_name) {}
         
-        ~generation_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE = default;
+        ~generation_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE {}
         
         //=== accessors ===//
         const char* what() const FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE;

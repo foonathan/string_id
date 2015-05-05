@@ -32,6 +32,16 @@ option(FOONATHAN_IMPL_HAS_CONSTEXPR "whether or not constexpr is supported" ${co
 option(FOONATHAN_IMPL_HAS_NOEXCEPT "whether or not noexcept is supported" ${comp_noexcept})
 option(FOONATHAN_IMPL_HAS_LITERAL "whether or not literal operator overloading is supported" ${comp_literal})
 option(FOONATHAN_IMPL_HAS_OVERRIDE "whether or not override is supported" ${comp_override})
+if (NOT CMAKE_COMPILER_IS_GNUCXX)
+    set(atomic_handler ON CACHE INTERNAL "")
+elseif(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 4.7 OR
+        CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.7)
+    set(atomic_handler ON CACHE INTERNAL "")
+else()
+    # not supported on GCC <= 4.6
+    set(atomic_handler OFF CACHE INTERNAL "")
+endif(NOT CMAKE_COMPILER_IS_GNUCXX)
+option(FOONATHAN_STRING_ID_ATOMIC_HANDLER "whether or not handler functions are atomic" ${atomic_handler})
 
 set(version_major 2 CACHE INTERNAL "")
 set(version_minor 0 CACHE INTERNAL "")

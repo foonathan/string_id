@@ -62,3 +62,6 @@
 /// \brief Whether or not the \c constexpr literal operators are availble.
 /// \detail If this is \c false, there is only the \ref id() function which can't be used inside switch cases.
 #define FOONATHAN_STRING_ID_HAS_LITERAL (FOONATHAN_IMPL_HAS_LITERAL && FOONATHAN_IMPL_HAS_CONSTEXPR)
+
+/// \brief Whether or not the handler functions are atomic.
+#cmakedefine01 FOONATHAN_STRING_ID_ATOMIC_HANDLER
