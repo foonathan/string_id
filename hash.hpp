@@ -13,7 +13,7 @@ namespace foonathan { namespace string_id
 {
     /// \brief The type of a hashed string.
     /// \detail This is an unsigned integral type.
-    using hash_type = std::uint64_t;
+    typedef std::uint64_t hash_type;
     
     namespace detail
     {

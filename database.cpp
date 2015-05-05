@@ -190,7 +190,7 @@ sid::map_database::map_database(std::size_t size, double max_load_factor)
 : buckets_(new node_list[size]),
   no_items_(0u), no_buckets_(size),
   max_load_factor_(max_load_factor),
-  next_resize_(std::floor(no_buckets_ * max_load_factor_))
+  next_resize_(static_cast<std::size_t>(std::floor(no_buckets_ * max_load_factor_)))
 {}
 
 sid::map_database::~map_database() FOONATHAN_NOEXCEPT {}
@@ -232,5 +232,5 @@ void sid::map_database::rehash()
         list->rehash(buckets, new_size);
     buckets_.reset(buckets);
     no_buckets_ = new_size;
-    next_resize_ = std::floor(no_buckets_ * max_load_factor_);
+    next_resize_ = static_cast<std::size_t>(std::floor(no_buckets_ * max_load_factor_));
 }

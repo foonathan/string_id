@@ -62,8 +62,8 @@ namespace foonathan { namespace string_id
         virtual const char* lookup(hash_type hash) const FOONATHAN_NOEXCEPT = 0;
         
     protected:
-        basic_database() FOONATHAN_NOEXCEPT = default;
-        ~basic_database() FOONATHAN_NOEXCEPT = default;
+        basic_database() = default;
+        ~basic_database() = default;
     };
 }} // foonathan::string_id
 

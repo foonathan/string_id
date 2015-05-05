@@ -37,7 +37,7 @@ namespace foonathan { namespace string_id
     {
     public:
         /// \brief The type of the internal state, an unsigned integer.
-        using state = unsigned long long;
+        typedef unsigned long long state;
         
         /// \brief Creates a new generator with given prefix.
         /// \arg \c counter is the start value for the counter.
@@ -89,7 +89,7 @@ namespace foonathan { namespace string_id
     {        
     public:        
         /// \brief The state of generator, a random number generator like \c std::mt19937.
-        using state = RandomNumberGenerator;
+        typedef RandomNumberGenerator state;
         
         /// \brief The number of characters appended.
         static FOONATHAN_CONSTEXPR_FNC std::size_t length() FOONATHAN_NOEXCEPT
