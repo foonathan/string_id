@@ -9,6 +9,7 @@
 #include <functional>
 
 #include "basic_database.hpp"
+#include "config.hpp"
 #include "hash.hpp"
 
 namespace foonathan { namespace string_id
@@ -23,7 +24,7 @@ namespace foonathan { namespace string_id
         std::size_t length;
         
         /// \brief Creates it from a null-terminated string (implicit conversion).
-        string_info(const char *str) noexcept
+        string_info(const char *str) FOONATHAN_NOEXCEPT
         : string(str), length(std::strlen(str)) {}
         
         /// \brief Creates it from a string with given length.
@@ -62,52 +63,52 @@ namespace foonathan { namespace string_id
         
         //=== accessors ===//
         /// \brief Returns the hashed value of the string.
-        hash_type hash_code() const noexcept
+        hash_type hash_code() const FOONATHAN_NOEXCEPT
         {
             return id_;
         }
         
         /// \brief Returns a reference to the database.
-        basic_database& database() const noexcept
+        basic_database& database() const FOONATHAN_NOEXCEPT
         {
             return *db_;
         }
         
         /// \brief Returns the string value itself.
         /// \detail This calls the \c lookup function on the database.
-        const char* string() const noexcept;
+        const char* string() const FOONATHAN_NOEXCEPT;
         
         //=== comparision ===//
         /// @{
         /// \brief Compares string ids with another or hashed values.
         /// \detail Two string ids are equal if they are from the same database and they have the same value.<br>
         /// A hashed value is equal to a string id if it is the same value.
-        friend bool operator==(string_id a, string_id b) noexcept
+        friend bool operator==(string_id a, string_id b) FOONATHAN_NOEXCEPT
         {
             return a.db_ == b.db_ && a.id_ == b.id_;
         }
         
-        friend bool operator==(hash_type a, const string_id &b) noexcept
+        friend bool operator==(hash_type a, const string_id &b) FOONATHAN_NOEXCEPT
         {
             return a == b.id_;
         }
         
-        friend bool operator==(const string_id &a, hash_type b) noexcept
+        friend bool operator==(const string_id &a, hash_type b) FOONATHAN_NOEXCEPT
         {
             return a.id_ == b;
         }
         
-        friend bool operator!=(const string_id &a, const string_id &b) noexcept
+        friend bool operator!=(const string_id &a, const string_id &b) FOONATHAN_NOEXCEPT
         {
             return !(a == b);
         }
         
-        friend bool operator!=(hash_type a, const string_id &b) noexcept
+        friend bool operator!=(hash_type a, const string_id &b) FOONATHAN_NOEXCEPT
         {
             return !(a == b);
         }
         
-        friend bool operator!=(const string_id &a, hash_type b) noexcept
+        friend bool operator!=(const string_id &a, hash_type b) FOONATHAN_NOEXCEPT
         {
             return !(a == b);
         }
@@ -120,13 +121,21 @@ namespace foonathan { namespace string_id
     
     namespace literals
     {
-        /// \brief A useful literal to hash a string.
-        /// \detail Since this function does not check for collisions only use it to compare a \ref string_id.<br>
-        /// It is also useful in places where a compile-time constant is needed.
-        constexpr hash_type operator""_id(const char *str, std::size_t) noexcept
+        /// \brief Same as the literal version, additional replacement if not supported.
+        FOONATHAN_CONSTEXPR_FNC hash_type id(const char *str)
         {
             return detail::sid_hash(str);
         }
+        
+        /// \brief A useful literal to hash a string.
+        /// \detail Since this function does not check for collisions only use it to compare a \ref string_id.<br>
+        /// It is also useful in places where a compile-time constant is needed.
+    #if FOONATHAN_STRING_ID_HAS_LITERAL
+        FOONATHAN_CONSTEXPR_FNC hash_type operator""_id(const char *str, std::size_t)
+        {
+            return detail::sid_hash(str);
+        }
+    #endif
     } // namespace literals
 }} // namespace foonathan::string_id
 
@@ -139,9 +148,9 @@ namespace std
         using argument_type = foonathan::string_id::string_id;
         using result_type = size_t;        
  
-        result_type operator()(const argument_type &arg) const noexcept
+        result_type operator()(const argument_type &arg) const FOONATHAN_NOEXCEPT
         {
-            return arg.hash_code();
+            return static_cast<result_type>(arg.hash_code());
         }
     };
 } // namspace std

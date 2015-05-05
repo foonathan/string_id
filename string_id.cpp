@@ -48,7 +48,7 @@ sid::string_id::string_id(const string_id &prefix, string_info str,
     status = db_->insert_prefix(id_, prefix.hash_code(), str.string, str.length);
 }
 
-const char* sid::string_id::string() const noexcept
+const char* sid::string_id::string() const FOONATHAN_NOEXCEPT
 {
     return db_->lookup(id_);
 }

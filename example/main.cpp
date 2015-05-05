@@ -26,8 +26,8 @@ int main() try
     
     //=== string_id usage ===//
     // create an id
-    sid::string_id id("Test0815", database);
-    std::cout << "Hash code " << id.hash_code() << " belongs to string \"" << id.string() << "\"\n";
+    sid::string_id sid("Test0815", database);
+    std::cout << "Hash code " << sid.hash_code() << " belongs to string \"" << sid.string() << "\"\n";
     // Output (Database supports retrieving): Hash code 16741300784925887095 belongs to string "Test0815"
     // Output (Database doesn't): Hash code 16741300784925887095 belongs to string "string_id database disabled"
     
@@ -38,9 +38,14 @@ int main() try
     // Output: false
     
     // compare id with constant
+#if FOONATHAN_STRING_ID_HAS_LITERAL
     std::cout << (a == "Hello"_id) << '\n';
+#else
+    std::cout << (a == id("Hello")) << '\n';
+#endif
     // Output: true
     
+#if FOONATHAN_STRING_ID_HAS_LITERAL
     // literal is compile-time
     switch (b.hash_code())
     {
@@ -54,6 +59,7 @@ int main() try
         std::cout << "World\n";
         break;
     }
+#endif
     
     //=== generation ===//
     // the prefix for all generated ids
@@ -64,7 +70,7 @@ int main() try
         // it uses the std::mt19937 generator for the actual generation
         using generator_t = sid::random_generator<std::mt19937, 8>;
         // create a generator, seed the random number generator with the current time
-        generator_t generator(prefix, std::mt19937(std::time(nullptr)));
+        generator_t generator(prefix, std::mt19937(std::int_fast32_t(std::time(nullptr))));
         
         std::vector<sid::string_id> ids;
         for (auto i = 0; i != 10; ++i)
