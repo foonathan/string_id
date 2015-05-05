@@ -23,14 +23,16 @@ set(version_major 2 CACHE INTERNAL "")
 set(version_minor 0 CACHE INTERNAL "")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
-	           "${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp")
+	           "${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp")
 
 if (BIICODE)    
-    ADD_BIICODE_TARGETS()    
+    ADD_BII_TARGETS()    
     set(targets ${BII_BLOCK_TARGETS} CACHE INTERNAL "")
+    
+    ACTIVATE_CPP11()
 else()        
     set(src basic_database.hpp
-            ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id/config.hpp
+            config.hpp
             database.hpp
             database.cpp
             error.cpp
@@ -43,18 +45,14 @@ else()
         CACHE INTERNAL "")
 
     add_library(foonathan_string_id ${src})
-    add_executable(foonathan_string_id_example ${src} example/main.cpp)
+    add_executable(foonathan_string_id_example example/main.cpp)
+    target_link_libraries(foonathan_string_id_example PUBLIC foonathan_string_id)
 
     set(targets foonathan_string_id foonathan_string_id_example CACHE INTERNAL "")
     
     set_target_properties(${targets} PROPERTIES CXX_STANDARD 11)
-    set_target_properties(${targets} PROPERTIES CXX_STANDARD_REQUIRED ON)
 endif()
 
 foreach(target ${targets})
     target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-    target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/foonathan/string_id)
-    if (BIICODE)
-        ACTIVATE_CPP11(${target})
-    endif()
 endforeach()
