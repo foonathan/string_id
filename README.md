@@ -1,6 +1,6 @@
 string id
 =========
-
+[![Build Status](https://webapi.biicode.com/v1/badges/foonathan/foonathan/string_id/master)](https://www.biicode.com/foonathan/string_id)
 Motivation
 ----------
 It is often useful for logging purposes in real-time applications like games to give each entity a name. This makes tracking down errors easier because finding entities via unique names is easier than looking at unique numbers or other forms of identifiers. But strings are huge and copying and comparing them is slow, so they often can't be used in performance critical code.
@@ -31,3 +31,12 @@ Hashing and Databases
 It currently uses a FNV-1a 64bit hash. Collisions are really rare, I have tested 219,606 English words (in lowercase) mixed with a bunch of numbers and didn't encounter a single collision. Since this is the normal use case for identifiers, the hash function is pretty good. In addition, there is a good distribution of the hashed values and it is easy to calculate.
 
 The database uses a specialized hash table. Collisions of the bucket index are resolved via separate chaining with single linked list. Each node contains the string directly without additional memory allocation. The nodes on the linked list are sorted using the hash value. This allows efficient retrieving and checking whether there is already a string with the same hash value stored. This makes it very efficient and faster than the std::unordered_map that was used before (at least faster than libstdc++ implementation I have used for the benchmarks).
+
+Compiler Support
+----------------
+This library has been compiled under the following compilers:
+* GCC 4.6-4.9 on Linux
+* clang 3.4-3.5 on Linux
+* Visual Studio 12 on Windows
+
+There are the compatibility options and replacement marcos for constexpr, noexcept, override and literal operators. Atomic handler functions can be disabled optionally and are off for GCC 4.6 by default since it does not support them.

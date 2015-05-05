@@ -1,3 +1,8 @@
+2.0-2
+-----
+* guaranteed support for more compilers
+* improved CMakeLists.txt
+
 2.0-1
 -----
 * updated support for newer Biicode versions
