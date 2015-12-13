@@ -49,12 +49,12 @@ set(version_minor 0 CACHE INTERNAL "")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
 	           "${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp")
 
-if (BIICODE)    
-    ADD_BII_TARGETS()    
+if (BIICODE)
+    ADD_BII_TARGETS()
     set(targets ${BII_BLOCK_TARGETS} CACHE INTERNAL "")
-    
+
     ACTIVATE_CPP11()
-else()        
+else()
     set(src basic_database.hpp
             config.hpp
             database.hpp
@@ -73,7 +73,7 @@ else()
     target_link_libraries(foonathan_string_id_example PUBLIC foonathan_string_id)
 
     set(targets foonathan_string_id foonathan_string_id_example CACHE INTERNAL "")
-    
+
     set_target_properties(${targets} PROPERTIES CXX_STANDARD 11)
 endif()
 
