@@ -2,7 +2,7 @@ if (BIICODE)
     include(${CMAKE_HOME_DIRECTORY}/biicode.cmake)
     include(biicode/cmake/tools)
 else()
-    cmake_minimum_required(VERSION 3.0)
+    cmake_minimum_required(VERSION 2.8)
     project(foonathan_string_id)
 endif()
 
@@ -10,11 +10,11 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG(-std=c++11 cpp11_flag)
 if (cpp11_flag)
-    set(CMAKE_REQUIRED_FLAGS "-std=c++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 else()
     CHECK_CXX_COMPILER_FLAG(-std=c++0x cpp0x_flag)
     if (cpp0x_flag)
-        set(CMAKE_REQUIRED_FLAGS "-std=c++0x")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
     endif(cpp0x_flag)
 endif(cpp11_flag)
 
@@ -49,12 +49,12 @@ set(version_minor 0 CACHE INTERNAL "")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.hpp.in"
 	           "${CMAKE_CURRENT_BINARY_DIR}/config_impl.hpp")
 
-if (BIICODE)    
-    ADD_BII_TARGETS()    
+if (BIICODE)
+    ADD_BII_TARGETS()
     set(targets ${BII_BLOCK_TARGETS} CACHE INTERNAL "")
-    
+
     ACTIVATE_CPP11()
-else()        
+else()
     set(src basic_database.hpp
             config.hpp
             database.hpp
@@ -73,7 +73,7 @@ else()
     target_link_libraries(foonathan_string_id_example PUBLIC foonathan_string_id)
 
     set(targets foonathan_string_id foonathan_string_id_example CACHE INTERNAL "")
-    
+
     set_target_properties(${targets} PROPERTIES CXX_STANDARD 11)
 endif()
 
