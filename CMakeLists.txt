@@ -15,9 +15,6 @@ else()
     CHECK_CXX_COMPILER_FLAG(-std=c++0x cpp0x_flag)
     if (cpp0x_flag)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please
-        use a different C++ compiler.")
     endif(cpp0x_flag)
 endif(cpp11_flag)
 
