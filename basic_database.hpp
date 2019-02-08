@@ -22,6 +22,8 @@ namespace foonathan { namespace string_id
         basic_database(const basic_database &) = delete;
         basic_database(basic_database &&) = delete;
         /// @}
+
+        virtual ~basic_database() = default;
         
         /// \brief The status of an insert operation.
         enum insert_status
@@ -63,7 +65,6 @@ namespace foonathan { namespace string_id
         
     protected:
         basic_database() = default;
-        ~basic_database() = default;
     };
 }} // foonathan::string_id
 
