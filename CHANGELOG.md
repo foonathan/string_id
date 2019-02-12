@@ -1,3 +1,9 @@
+2.0-3
+-----
+* bugfix of hashing
+* silence clang-tidy warning
+* remove biicode support
+
 2.0-2
 -----
 * guaranteed support for more compilers
