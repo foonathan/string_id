@@ -1,6 +1,6 @@
 string id
 =========
-[![Build Status](https://webapi.biicode.com/v1/badges/foonathan/foonathan/string_id/master)](https://www.biicode.com/foonathan/string_id)
+
 Motivation
 ----------
 It is often useful for logging purposes in real-time applications like games to give each entity a name. This makes tracking down errors easier because finding entities via unique names is easier than looking at unique numbers or other forms of identifiers. But strings are huge and copying and comparing them is slow, so they often can't be used in performance critical code.
