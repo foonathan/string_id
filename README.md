@@ -1,6 +1,8 @@
 string id
 =========
 
+![Project Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fwww.jonathanmueller.dev%2Fproject%2Fstring_id%2Findex.json)
+
 Motivation
 ----------
 It is often useful for logging purposes in real-time applications like games to give each entity a name. This makes tracking down errors easier because finding entities via unique names is easier than looking at unique numbers or other forms of identifiers. But strings are huge and copying and comparing them is slow, so they often can't be used in performance critical code.
