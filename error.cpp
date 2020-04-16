@@ -41,11 +41,7 @@ sid::collision_handler sid::get_collision_handler()
 
 const char* sid::collision_error::what() const FOONATHAN_NOEXCEPT try
 {
-    std::ostringstream str;
-    str << "foonathan::string_id::collision_error: strings "
-        << '"' << a_ << '"' << " and " << '"' << b_ << '"'
-        << " are both producing the value " << hash_ << '.';
-    return str.str().c_str();
+    return what_.c_str();
 }
 catch (...)
 {
@@ -89,8 +85,7 @@ sid::generation_error_handler sid::get_generation_error_handler()
 
 const char* sid::generation_error::what() const FOONATHAN_NOEXCEPT try
 {
-    return ("foonathan::string_id::generation_error: Generator \"" + name_ +
-            "\" was unable to generate new string id.").c_str();
+    return what_.c_str();
 }
 catch (...)
 {

@@ -39,7 +39,9 @@ namespace foonathan { namespace string_id
         //=== constructor/destructor ===//
         /// \brief Creates a new exception, same parameter as \ref collision_handler.
         collision_error(hash_type hash, const char *a, const char *b)
-        : a_(a), b_(b), hash_(hash) {}
+        : a_(a), b_(b),
+          what_(R"(foonathan::string_id::collision_error: strings ")" + a_ + R"(" and ")" + b_ +
+                R"(") are both producing the value )" + std::to_string(hash)), hash_(hash) {}
         
         ~collision_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE {}
         
@@ -66,7 +68,7 @@ namespace foonathan { namespace string_id
         }
         
     private:
-        std::string a_, b_;
+        std::string a_, b_, what_;
         hash_type hash_;
     };
     
@@ -92,7 +94,8 @@ namespace foonathan { namespace string_id
         //=== constructor/destructor ===//
         /// \brief Creates it by giving it the name of the generator.
         generation_error(const char *generator_name)
-        : name_(generator_name) {}
+        : name_(generator_name), what_("foonathan::string_id::generation_error: Generator \"" + name_ +
+                                       "\" was unable to generate new string id.") {}
         
         ~generation_error() FOONATHAN_NOEXCEPT FOONATHAN_OVERRIDE {}
         
@@ -106,7 +109,7 @@ namespace foonathan { namespace string_id
         }
         
     private:
-        std::string name_;
+        std::string name_, what_;
     };
 }} // namespace foonathan::string_id
 
